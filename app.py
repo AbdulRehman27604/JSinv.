@@ -10,7 +10,7 @@ def login():
         password = request.form['password']
 
         if email == "a@m.com" and password == "1":
-            return redirect('main.html')
+            return render_template('main.html')
 
 
     return render_template('login.html')
