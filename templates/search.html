@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Jobs</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #1C1C1C;
+      font-family: 'Poppins', sans-serif;
+      padding: 20px;
+      color: white;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 380px;
+      padding: 40px 35px;
+      border-radius: 15px;
+      background: #303030;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+
+      border: none;
+      border-radius: 8px;
+      color: #2B2637;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .error-message {
+      margin-top: 15px;
+      color: #ff6b6b;
+      display: {% if msg %}block{% else %}none{% endif %};
+    }
+
+    /* TABLE STYLE */
+    table {
+      width: 100%;
+      max-width: 900px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #2b2b2b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+
+    th {
+      background: #66FCF1;
+      color: #1C1C1C;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background: #3a3a3a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="search-box">
+    <h1>Search Previous Jobs</h1>
+    <p class="subtitle">Enter a date</p>
+
+    <form action="{{ url_for('search_jobs') }}" method="POST">
+      <input type="date" id="sdate" name="sdate" required>
+      <button type="submit">Search</button>
+      <p class="error-message">{{ msg }}</p>
+    </form>
+  </div>
+
+  {% if results %}
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Job #</th>
+        <th>Supplier</th>
+        <th>Broker</th>
+        <th>Width</th>
+        <th>Weight</th>
+        <th>Order</th>
+        <th>Utilize</th>
+        <th>Tpipe</th>
+        <th>DC</th>
+        <th>Wastage</th>
+        <th>Coil Type</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for r in results %}
+      <tr>
+        <td>{{ r.date_time }}</td>
+        <td>{{ r.job_num }}</td>
+        <td>{{ r.supp_code }}</td>
+        <td>{{ r.broker_code }}</td>
+        <td>{{ r.width }}</td>
+        <td>{{ r.weight }}</td>
+        <td>{{ r.order_num }}</td>
+        <td>{{ r.utilize }}</td>
+        <td>{{ r.tpipe }}</td>
+        <td>{{ r.dc_num }}</td>
+        <td>{{ r.wastage }}</td>
+        <td>{{ r.coil_type }}</td>
+        <td>{{ r.comments }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+  {% endif %}
+
+  <button onclick="window.print()" class="print-btn">Print</button>
+
+</body>
+</html>

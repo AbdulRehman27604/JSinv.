@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login - ItemLocation_Tracker</title>
+  <title></title>
   <style>
     /* Reset and global box sizing */
     * {
@@ -17,7 +17,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at top left, #6c63ff, #2B2637, #1f1c29);
+      background: #1C1C1C;
       font-family: 'Poppins', sans-serif;
       overflow: hidden;
       padding: 20px;
@@ -28,7 +28,7 @@
       max-width: 380px;
       padding: 40px 35px;
       border-radius: 15px;
-      background: rgba(45, 40, 65, 0.6);
+      background: #303030;
       border: 1px solid rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(12px);
       box-shadow:
@@ -157,34 +157,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.6;
-      animation: float 8s infinite ease-in-out alternate;
-    }
-
-    .orb.one {
-      width: 250px;
-      height: 250px;
-      background: #66FCF1;
-      top: 15%;
-      left: 10%;
-    }
-
-    .orb.two {
-      width: 300px;
-      height: 300px;
-      background: #6C63FF;
-      bottom: 10%;
-      right: 10%;
-    }
-
-    @keyframes float {
-      from { transform: translateY(0px); }
-      to { transform: translateY(40px); }
-    }
 
     /* Responsive */
     @media (max-width: 768px) {
@@ -227,8 +199,7 @@
   </style>
 </head>
 <body>
-  <div class="orb one"></div>
-  <div class="orb two"></div>
+
 
   <div class="login-box">
     <h1>Welcome Back</h1>

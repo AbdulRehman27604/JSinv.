@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Record</title>
+  <style>
+    body { background:#222; color:white; font-family:Arial; padding:20px; }
+    input, select, textarea {
+      width: 300px; padding:8px; margin-bottom:10px;
+      background:#333; color:white; border:1px solid #666;
+    }
+    button {
+      padding:10px 20px; font-weight:bold;
+      background:white; color:red; border:none; cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Edit Record</h2>
+
+  <form method="POST" action="{{ url_for('update_record', date_time=record.date_time) }}">
+
+    <label>Job Number:</label><br>
+    <input type="text" name="JobNumber" value="{{ record.job_num }}"><br>
+
+    <label>Supplier Code:</label><br>
+    <input type="text" name="SupplierCode" value="{{ record.supp_code }}"><br>
+
+    <label>Broker Code:</label><br>
+    <input type="text" name="BrokerCode" value="{{ record.broker_code }}"><br>
+
+    <label>Supplier Name:</label><br>
+    <select name="supplier">
+      <option value="{{ record.supplier_name }}" selected>{{ record.supplier_name }}</option>
+      <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
+      <option value="GUL DEEWAN">GUL DEEWAN</option>
+      <option value="CHINA">CHINA</option>
+    </select><br>
+
+    <label>Width:</label><br>
+    <input type="text" name="Width" value="{{ record.width }}"><br>
+
+    <label>Weight:</label><br>
+    <input type="text" name="Weight" value="{{ record.weight }}"><br>
+
+    <label>Order No:</label><br>
+    <input type="text" name="Order" value="{{ record.order_num }}"><br>
+
+    <label>Utilize:</label><br>
+    <input type="text" name="Utilize" value="{{ record.utilize }}"><br>
+
+    <label>T.pipe:</label><br>
+    <input type="text" name="Tpipe" value="{{ record.tpipe }}"><br>
+
+    <label>DC No:</label><br>
+    <input type="text" name="DC" value="{{ record.dc_num }}"><br>
+
+    <label>Wastage:</label><br>
+    <input type="text" name="Wastage" value="{{ record.wastage }}"><br>
+
+    <label>Coil Type:</label><br>
+    <select name="coil">
+      <option value="{{ record.coil_type }}" selected>{{ record.coil_type }}</option>
+      <option value="CRC">CRC</option>
+      <option value="HRC">HRC</option>
+      <option value="GI">GI</option>
+    </select><br>
+
+    <label>Comments:</label><br>
+    <textarea name="Comments">{{ record.comments }}</textarea><br>
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+</body>
+</html>
