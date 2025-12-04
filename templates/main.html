@@ -43,7 +43,7 @@
 
     label {
       display: inline-block;
-      width: 100px;
+      width: 120px;
       margin-bottom: 5px;
       font-weight: bold;
     }
@@ -101,51 +101,85 @@
       background-color: #2e2e2e;
     }
 
-    /* 🔥 LIMIT TABLE HEIGHT + SCROLL */
     .table-container {
       max-height: 400px;
       overflow-y: auto;
       border: 1px solid #444;
       border-radius: 6px;
     }
-
-    .table-container::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .table-container::-webkit-scrollbar-thumb {
-      background-color: #555;
-      border-radius: 4px;
-    }
-
-    .table-container::-webkit-scrollbar-thumb:hover {
-      background-color: #777;
-    }
   </style>
 </head>
 
 <body>
 
-<a href="{{ url_for('search_jobs') }}" style="color: yellow;">Search Cutting</a>
+<a href="{{ url_for('search_jobs') }}" style="color: yellow;">Search GRN</a>
 
 <header>Jeddah Steel Pvt Ltd</header>
 
-<h2>Cutting Job:</h2>
+<h2>GRN:</h2>
 
 <form id="cuttingForm" method="POST" action="/submit">
   <div class="form-container">
 
+    <!-- SECTION 1 -->
     <div class="section">
-      <label>Job Number:</label>
+      <label for="JobNumber">Tm No:</label>
       <input type="text" id="JobNumber" name="JobNumber"><br>
 
-      <label>Supplier Code:</label>
+      <label for="SupplierCode">Supplier Code:</label>
       <input type="text" id="SupplierCode" name="SupplierCode"><br>
 
-      <label>Broker Code:</label>
+      <label for="BrokerCode">Broker Code:</label>
       <input type="text" id="BrokerCode" name="BrokerCode"><br><br>
 
-      <label>Supplier Name:</label><br>
+      <label for="Comments">Comments:</label><br>
+      <textarea id="Comments" name="Comments" rows="3"></textarea>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section">
+      <label for="Hardness">Hardness:</label>
+      <input type="text" id="Hardness" name="Hardness" required><br>
+
+      <label for="Weight">Weight:</label>
+      <input type="text" id="Weight" name="Weight" required><br>
+
+      <label for="Grade">Grade:</label>
+      <select id="Grade" name="Grade">
+        <option disabled selected>Select Grade</option>
+        <option value="SPCC">SPCC</option>
+        <option value="HARD">HARD</option>
+      </select><br><br>
+
+      <label for="itemcode">Item Code:</label>
+      <input type="text" id="itemcode" name="itemcode"><br>
+
+      <label for="UOM">UOM:</label>
+      <input type="text" id="UOM" name="UOM" required><br>
+
+      <input type="hidden" id="serial_num" name="serial_num" required><br>
+
+      <label for="BatchNo">Batch No:</label>
+      <input type="text" id="BatchNo" name="BatchNo" required>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section" style="max-width:220px;">
+      <label for="Manufcode">Manuf code:</label>
+      <input type="text" id="manufcode" name="manufcode" required><br>
+
+      <label for="DC">DC No:</label>
+      <input type="text" id="DC" name="DC" required><br><br>
+
+      <label for="coil">Coil Type:</label>
+      <select id="coil" name="coil">
+        <option disabled selected>Select Coil Type</option>
+        <option value="CRC">CRC</option>
+        <option value="HRC">HRC</option>
+        <option value="GI">GI</option>
+      </select><br><br>
+
+      <label for="supplier">Supplier Name:</label>
       <select id="supplier" name="supplier">
         <option disabled selected>Select Supplier</option>
         <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
@@ -153,43 +187,16 @@
         <option value="CHINA">CHINA</option>
       </select><br><br>
 
-      <label>Comments:</label><br>
-      <textarea id="Comments" name="Comments" rows="3"></textarea>
-    </div>
-
-    <div class="section">
-      <label>Width:</label>
-      <input type="text" id="Width" name="Width" required><br>
-
-      <label>Weight:</label>
-      <input type="text" id="Weight" name="Weight" required><br>
-
-      <label>Order No:</label>
-      <input type="text" id="Order" name="Order" required><br><br>
-
-      <label>Utilize:</label>
-      <input type="text" id="Utilize" name="Utilize" required><br>
-
-      <label>T.pipe:</label>
-      <input type="text" id="Tpipe" name="Tpipe" required><br>
-
-      <label>DC No:</label>
-      <input type="text" id="DC" name="DC" required><br>
-
-      <label>Wastage:</label>
-      <input type="text" id="Wastage" name="Wastage" required><br><br>
-    </div>
-
-    <div class="section" style="max-width:200px;">
-      <label>Coil Type:</label>
-      <select id="coil" name="coil">
-        <option disabled selected>Select Coil Type</option>
+      <label for="ItemDesc">Item Desc:</label>
+      <select id="ItemDesc" name="ItemDesc">
+        <option disabled selected>Select the Item Desc</option>
         <option value="CRC">CRC</option>
         <option value="HRC">HRC</option>
         <option value="GI">GI</option>
       </select>
     </div>
 
+    <!-- SECTION 4 -->
     <div class="section" style="max-width:200px;">
       <button type="submit">Submit</button><br><br>
       <button type="reset">Clear</button>
@@ -205,49 +212,39 @@
   <thead>
     <tr>
       <th>Date & Time</th>
-      <th>Job No</th>
-      <th>Supplier Code</th>
-      <th>Broker Code</th>
-      <th>Supplier Name</th>
-      <th>Width</th>
+      <th>Item Code</th>
+      <th>Manuf Code</th>
+      <th>Item Desc</th>
+      <th>UOM</th>
+      <th>Batch No</th>
       <th>Weight</th>
-      <th>Order No</th>
-      <th>Utilize</th>
-      <th>T.pipe</th>
-      <th>DC No</th>
-      <th>Wastage</th>
+      <th>Hardness</th>
+      <th>Grade</th>
       <th>Coil Type</th>
-      <th>Comments</th>
       <th>Edit</th>
       <th>Delete</th>
     </tr>
   </thead>
 
- <tbody>
+  <tbody>
   {% for r in records %}
-  <tr>
+    <tr>
       <td>{{ r.date_time }}</td>
-      <td>{{ r.job_num }}</td>
-      <td>{{ r.supp_code }}</td>
-      <td>{{ r.broker_code }}</td>
-      <td>{{ r.supplier_name }}</td>
-      <td>{{ r.width }}</td>
+      <td>{{ r.itemcode }}</td>
+      <td>{{ r.manufcode }}</td>
+      <td>{{ r.item_desc }}</td>
+      <td>{{ r.uom }}</td>
+      <td>{{ r.batchNo }}</td>
       <td>{{ r.weight }}</td>
-      <td>{{ r.order_num }}</td>
-      <td>{{ r.utilize }}</td>
-      <td>{{ r.tpipe }}</td>
-      <td>{{ r.dc_num }}</td>
-      <td>{{ r.wastage }}</td>
+      <td>{{ r.hardness }}</td>
+      <td>{{ r.grade }}</td>
       <td>{{ r.coil_type }}</td>
-      <td>{{ r.comments }}</td>
 
-      <!-- EDIT BUTTON -->
       <td>
         <a href="{{ url_for('edit_record', date_time=r.date_time) }}"
            style="color: yellow; font-weight: bold;">Edit</a>
       </td>
 
-      <!-- DELETE BUTTON -->
       <td>
         <a href="{{ url_for('delete_record', date_time=r.date_time) }}"
            style="color: red; font-weight: bold;"
@@ -255,13 +252,39 @@
            Delete
         </a>
       </td>
-
-  </tr>
+    </tr>
   {% endfor %}
-</tbody>
-
+  </tbody>
 </table>
 </div>
+
+<script>
+  (function () {
+    const coilSelect      = document.getElementById('coil');
+    const serialNumInput  = document.getElementById('serial_num');
+
+    const initialCounters = {{ counters|tojson }};
+
+    function generateSerialNum() {
+      const coilValue = coilSelect.value;
+      if (!coilValue) return;
+
+      const tpCoil = coilValue.charAt(0).toUpperCase();
+      const year = new Date().getFullYear().toString().slice(-2);
+
+      let last = initialCounters[tpCoil] || 0;
+      last += 1;
+      initialCounters[tpCoil] = last;
+
+      const serial = String(last).padStart(5, '0');
+      const code = `${tpCoil}-010-${serial}-${year}`;
+
+      serialNumInput.value = code;
+    }
+
+    coilSelect.addEventListener('change', generateSerialNum);
+  })();
+</script>
 
 </body>
 </html>

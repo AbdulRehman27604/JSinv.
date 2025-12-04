@@ -3,14 +3,39 @@
 <head>
   <title>Edit Record</title>
   <style>
-    body { background:#222; color:white; font-family:Arial; padding:20px; }
+    body {
+      background:#222;
+      color:white;
+      font-family:Arial, sans-serif;
+      padding:20px;
+    }
+    label {
+      display:block;
+      margin-top:10px;
+      margin-bottom:4px;
+      font-weight:bold;
+    }
     input, select, textarea {
-      width: 300px; padding:8px; margin-bottom:10px;
-      background:#333; color:white; border:1px solid #666;
+      width: 300px;
+      padding:8px;
+      margin-bottom:10px;
+      background:#333;
+      color:white;
+      border:1px solid #666;
+      border-radius:3px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
     }
     button {
-      padding:10px 20px; font-weight:bold;
-      background:white; color:red; border:none; cursor:pointer;
+      padding:10px 20px;
+      font-weight:bold;
+      background:white;
+      color:red;
+      border:none;
+      cursor:pointer;
+      margin-top:15px;
     }
   </style>
 </head>
@@ -20,54 +45,80 @@
 
   <form method="POST" action="{{ url_for('update_record', date_time=record.date_time) }}">
 
-    <label>Job Number:</label><br>
-    <input type="text" name="JobNumber" value="{{ record.job_num }}"><br>
+    <!-- Tm No -->
+    <label>Tm No</label>
+    <input type="text" name="JobNumber" value="{{ record.job_num }}">
 
-    <label>Supplier Code:</label><br>
-    <input type="text" name="SupplierCode" value="{{ record.supp_code }}"><br>
+    <!-- Supplier Code -->
+    <label>Supplier Code:</label>
+    <input type="text" name="SupplierCode" value="{{ record.supp_code }}">
 
-    <label>Broker Code:</label><br>
-    <input type="text" name="BrokerCode" value="{{ record.broker_code }}"><br>
+    <!-- Broker Code -->
+    <label>Broker Code:</label>
+    <input type="text" name="BrokerCode" value="{{ record.broker_code }}">
 
-    <label>Supplier Name:</label><br>
+    <!-- Supplier Name -->
+    <label>Supplier Name:</label>
     <select name="supplier">
       <option value="{{ record.supplier_name }}" selected>{{ record.supplier_name }}</option>
       <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
       <option value="GUL DEEWAN">GUL DEEWAN</option>
       <option value="CHINA">CHINA</option>
-    </select><br>
+    </select>
 
-    <label>Width:</label><br>
-    <input type="text" name="Width" value="{{ record.width }}"><br>
+    <!-- Hardness -->
+    <label>Hardness:</label>
+    <input type="text" name="Hardness" value="{{ record.hardness }}">
 
-    <label>Weight:</label><br>
-    <input type="text" name="Weight" value="{{ record.weight }}"><br>
+    <!-- Weight -->
+    <label>Weight:</label>
+    <input type="text" name="Weight" value="{{ record.weight }}">
 
-    <label>Order No:</label><br>
-    <input type="text" name="Order" value="{{ record.order_num }}"><br>
+    <!-- Grade -->
+    <label>Grade:</label>
+    <select name="Grade">
+      <option value="{{ record.grade }}" selected>{{ record.grade }}</option>
+      <option value="SPCC">SPCC</option>
+      <option value="HARD">HARD</option>
+    </select>
 
-    <label>Utilize:</label><br>
-    <input type="text" name="Utilize" value="{{ record.utilize }}"><br>
+    <!-- Item Code -->
+    <label>Item Code:</label>
+    <input type="text" name="itemcode" value="{{ record.itemcode }}">
 
-    <label>T.pipe:</label><br>
-    <input type="text" name="Tpipe" value="{{ record.tpipe }}"><br>
+    <!-- Manuf code -->
+    <label>Manuf code:</label>
+    <input type="text" name="Tpipe" value="{{ record.tpipe }}">
 
-    <label>DC No:</label><br>
-    <input type="text" name="DC" value="{{ record.dc_num }}"><br>
+    <!-- DC No -->
+    <label>DC No:</label>
+    <input type="text" name="DC" value="{{ record.dc_num }}">
 
-    <label>Wastage:</label><br>
-    <input type="text" name="Wastage" value="{{ record.wastage }}"><br>
+    <!-- UOM -->
+    <label>UOM:</label>
+    <input type="text" name="UOM" value="{{ record.uom }}">
 
-    <label>Coil Type:</label><br>
+    <!-- Coil Type -->
+    <label>Coil Type:</label>
     <select name="coil">
       <option value="{{ record.coil_type }}" selected>{{ record.coil_type }}</option>
       <option value="CRC">CRC</option>
       <option value="HRC">HRC</option>
       <option value="GI">GI</option>
-    </select><br>
+    </select>
 
-    <label>Comments:</label><br>
-    <textarea name="Comments">{{ record.comments }}</textarea><br>
+    <!-- Item Desc -->
+    <label>Item Desc:</label>
+    <select name="ItemDesc">
+      <option value="{{ record.item_desc }}" selected>{{ record.item_desc }}</option>
+      <option value="CRC">CRC</option>
+      <option value="HRC">HRC</option>
+      <option value="GI">GI</option>
+    </select>
+
+    <!-- Comments -->
+    <label>Comments:</label>
+    <textarea name="Comments">{{ record.comments }}</textarea>
 
     <button type="submit">Save Changes</button>
   </form>

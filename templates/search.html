@@ -22,7 +22,7 @@
 
     .search-box {
       width: 100%;
-      max-width: 380px;
+      max-width: 800px;
       padding: 40px 35px;
       border-radius: 15px;
       background: #303030;
@@ -75,10 +75,11 @@
       padding: 12px;
       text-align: left;
       border-bottom: 1px solid #444;
+      color:yellow;
     }
 
     th {
-      background: #66FCF1;
+      background: gray;
       color: #1C1C1C;
       font-weight: bold;
     }
@@ -105,38 +106,32 @@
   <table>
     <thead>
       <tr>
-        <th>Date</th>
-        <th>Job #</th>
-        <th>Supplier</th>
-        <th>Broker</th>
-        <th>Width</th>
-        <th>Weight</th>
-        <th>Order</th>
-        <th>Utilize</th>
-        <th>Tpipe</th>
-        <th>DC</th>
-        <th>Wastage</th>
-        <th>Coil Type</th>
-        <th>Comments</th>
-      </tr>
+      <th>Date & Time</th>
+      <th>Item Code</th>
+      <th>Manuf Code</th>
+      <th>Item Desc</th>
+      <th>UOM</th>
+      <th>Batch No</th>
+      <th>Weight</th>
+      <th>Hardness</th>
+      <th>Grade</th>
+      <th>Coil Type</th>
+    </tr>
     </thead>
 
     <tbody>
       {% for r in results %}
-      <tr>
+      <tr class="job-row" data-date="{{ r.date_time }}">
         <td>{{ r.date_time }}</td>
-        <td>{{ r.job_num }}</td>
-        <td>{{ r.supp_code }}</td>
-        <td>{{ r.broker_code }}</td>
-        <td>{{ r.width }}</td>
-        <td>{{ r.weight }}</td>
-        <td>{{ r.order_num }}</td>
-        <td>{{ r.utilize }}</td>
+        <td>{{ r.itemcode }}</td>
         <td>{{ r.tpipe }}</td>
-        <td>{{ r.dc_num }}</td>
-        <td>{{ r.wastage }}</td>
+        <td>{{ r.item_desc }}</td>
+        <td>{{ r.uom }}</td>
+        <td>{{ r.batchNo }}</td>
+        <td>{{ r.weight }}</td>
+        <td>{{ r.hardness }}</td>
+        <td>{{ r.grade }}</td>
         <td>{{ r.coil_type }}</td>
-        <td>{{ r.comments }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -144,7 +139,19 @@
   </table>
   {% endif %}
 
-  <button onclick="window.print()" class="print-btn">Print</button>
+
+  <script>
+  document.querySelectorAll(".job-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const date = row.dataset.date;
+      // Redirect to Flask page
+      window.location = "/job_sheet/" + encodeURIComponent(date);
+    });
+  });
+</script>
+
+
+  <!--<button onclick="window.print()" class="print-btn">Print</button>
 
 </body>
 </html>
