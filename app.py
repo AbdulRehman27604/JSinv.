@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from collections import defaultdict
-
 from flask import jsonify
 
 app = Flask(__name__)
@@ -11,6 +10,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Abdare123@localhos
 app.secret_key = "secret123"
 db = SQLAlchemy(app)
 
+
+# ----------------------------
+# DATABASE MODELS
+# ----------------------------
 
 class CoilType(db.Model):
     __tablename__ = 'coil_types'
@@ -31,7 +34,6 @@ class Grade(db.Model):
     __tablename__ = 'grades'
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(100), unique=True, nullable=False)
-
 
 
 class inventory(db.Model):
@@ -58,6 +60,20 @@ class inventory(db.Model):
     uom = db.Column(db.String(50))
     item_desc = db.Column(db.String(200))
 
+@app.route("/")
+def homepage():
+    return redirect("/home")
+
+
+@app.route("/home")
+def home():
+    return render_template("home.html")
+
+
+
+# ----------------------------
+# LOGIN PAGE
+# ----------------------------
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -67,11 +83,15 @@ def login():
     return render_template('login.html')
 
 
+# ----------------------------
+# MAIN / GRN PAGE
+# ----------------------------
+
 @app.route("/main")
 def main_page():
     records = inventory.query.order_by(inventory.date_time.desc()).all()
 
-    # Serial counter prefix extraction
+    # Serial number handling
     pattern = re.compile(r"^([A-Z])-010-(\d{5})-(\d{2})$")
     counters = defaultdict(int)
 
@@ -83,9 +103,9 @@ def main_page():
                 num = int(m.group(2))
                 counters[prefix] = max(counters[prefix], num)
 
+    # MAIN PAGE NOW DOES NOT SHOW SUBMITTED RECORDS
     return render_template(
         "main.html",
-        records=records,
         counters=dict(counters),
         coil_types=CoilType.query.all(),
         suppliers=Supplier.query.all(),
@@ -94,6 +114,14 @@ def main_page():
     )
 
 
+@app.route("/grn")
+def grn():
+    return redirect("/main")  # GRN simply loads main page
+
+
+# ----------------------------
+# SUBMIT DATA
+# ----------------------------
 
 @app.route("/submit", methods=["POST"])
 def submit_data():
@@ -104,11 +132,11 @@ def submit_data():
             job_num=request.form.get("JobNumber"),
             supp_code=request.form.get("SupplierCode"),
             broker_code=request.form.get("BrokerCode"),
-            supplier_name=request.form.get("supplier"),
+            supplier_name=request.form.get("supplier_name"),
 
             weight=request.form.get("Weight"),
-            manufcode=request.form.get("Maufcode"),
-            dc_num=request.form.get("DC"),
+            manufcode=request.form.get("manufcode"),
+            dc_num=request.form.get("dc_num"),
             coil_type=request.form.get("coil"),
             comments=request.form.get("Comments"),
 
@@ -122,13 +150,15 @@ def submit_data():
 
         db.session.add(record)
         db.session.commit()
-
         return redirect("/main")
 
     except Exception as e:
         return f"Error: {e}"
 
 
+# ----------------------------
+# SEARCH PAGE
+# ----------------------------
 
 @app.route("/search", methods=["GET", "POST"])
 def search_jobs():
@@ -149,6 +179,20 @@ def search_jobs():
     return render_template("search.html", msg=msg)
 
 
+# ----------------------------
+# RECORDS PAGE (TABLE ONLY)
+# ----------------------------
+
+@app.route("/records")
+def records_page():
+    data = inventory.query.order_by(inventory.date_time.desc()).all()
+    return render_template("records.html", data=data)
+
+
+# ----------------------------
+# DELETE A RECORD
+# ----------------------------
+
 @app.route("/delete/<date_time>")
 def delete_record(date_time):
     try:
@@ -157,14 +201,19 @@ def delete_record(date_time):
         if record:
             db.session.delete(record)
             db.session.commit()
-            return redirect("/main")
+            return redirect("/records")
         else:
             return "Record not found."
+
     except Exception as e:
         return f"Error deleting record: {e}"
 
 
-@app.route("/edit/<date_time>", methods=["GET"])
+# ----------------------------
+# EDIT PAGE
+# ----------------------------
+
+@app.route("/edit/<date_time>")
 def edit_record(date_time):
     record = inventory.query.filter_by(date_time=date_time).first()
     if not record:
@@ -184,11 +233,11 @@ def update_record(date_time):
         record.job_num = request.form.get("JobNumber")
         record.supp_code = request.form.get("SupplierCode")
         record.broker_code = request.form.get("BrokerCode")
-        record.supplier_name = request.form.get("supplier")
+        record.supplier_name = request.form.get("supplier_name")
 
         record.weight = request.form.get("Weight")
-        record.manufcode = request.form.get("Maufcode")
-        record.dc_num = request.form.get("DC")
+        record.manufcode = request.form.get("manufcode")
+        record.dc_num = request.form.get("dc_num")
         record.coil_type = request.form.get("coil")
         record.comments = request.form.get("Comments")
 
@@ -200,31 +249,35 @@ def update_record(date_time):
         record.item_desc = request.form.get("ItemDesc")
 
         db.session.commit()
-
-        return redirect("/main")
+        return redirect("/records")
 
     except Exception as e:
         return f"Error updating record: {e}"
 
+
+# ----------------------------
+# JOB SHEET PAGE
+# ----------------------------
+
 @app.route("/job_sheet/<date_time>")
 def job_sheet(date_time):
-
-    # Retrieve the full row based on date_time
-    row = db.session.query(inventory).filter_by(date_time=date_time).first()
-
+    row = inventory.query.filter_by(date_time=date_time).first()
     if not row:
         return "Record not found", 404
 
     return render_template("job_sheet.html", r=row)
 
-# add buttin path
+
+# ----------------------------
+# MANAGE OPTIONS (COIL, SUPPLIER, DESC, GRADE)
+# ----------------------------
+
 @app.route("/add_option", methods=["POST"])
 def add_option():
     data = request.get_json()
     option_type = data.get("type")
     value = data.get("value").strip()
 
-    # Determine which table to use
     if option_type == "coil":
         new_entry = CoilType(value=value)
     elif option_type == "supplier":
@@ -242,6 +295,7 @@ def add_option():
         return {"status": "success"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
 
 @app.route("/get_options/<type_name>")
 def get_options(type_name):
@@ -308,6 +362,18 @@ def delete_option():
     return jsonify({"status": "success"})
 
 
+# ----------------------------
+# LOGOUT
+# ----------------------------
+
+@app.route("/logout")
+def logout():
+    return redirect("/")
+
+
+# ----------------------------
+# RUN APP
+# ----------------------------
 
 with app.app_context():
     db.create_all()

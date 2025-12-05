@@ -1,428 +1,344 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jeddah Steel Interface</title>
+{% extends "layout.html" %}
+{% block extra_styles %}
+<style>
 
-  <style>
-    body {
-      background-color: #2b2b2b;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
+.page-container {
+    padding: 20px;
+}
 
-    header {
-      text-align: right;
-      font-weight: bold;
-      font-size: 20px;
-      color: #f1e60d;
-      margin-bottom: 20px;
-    }
+/* ---------- GRN FORM LAYOUT ---------- */
 
-    h2 {
-      color: white;
-      margin-bottom: 10px;
-    }
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
 
-    .form-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
+.section {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 300px;
+    flex: 1;
+}
 
-    .section {
-      background-color: #333;
-      padding: 15px;
-      border-radius: 6px;
-      min-width: 280px;
-      flex: 1;
-    }
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
 
-    label {
-      display: inline-block;
-      width: 120px;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
+.form-row label {
+    width: 130px;
+    margin-right: 10px;
+    font-weight: bold;
+}
 
-    input[type="text"], textarea, select {
-      background-color: #1c1c1c;
-      border: none;
-      color: white;
-      padding: 6px 8px;
-      width: 100%;
-      max-width: 180px;
-      border-radius: 3px;
-    }
+.form-row input,
+.form-row textarea,
+.form-row select {
+    flex: 1;
+    background-color: #1c1c1c;
+    border: none;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+}
 
-    textarea {
-      resize: none;
-      width: 100%;
-      border-radius: 4px;
-    }
+textarea { resize: none; height: 80px; }
 
-    button {
-      padding: 6px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.manage-btn {
+    background-color: #555;
+    color: yellow;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-    .manage-btn {
-      background-color: #555;
-      color: yellow;
-    }
+.submit-btn {
+    background-color: white;
+    color: red;
+    font-weight: bold;
+    width: 120px;
+}
 
-    .submit-btn {
-      background-color: white;
-      color: red;
-      width: 120px;
-    }
+.clear-btn {
+    background-color: #ccc;
+    color: black;
+    font-weight: bold;
+    width: 120px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #1e1e1e;
-      border-radius: 6px;
-      overflow: hidden;
-    }
+/* ---------- TABLE ---------- */
 
-    th, td {
-      border: 1px solid #444;
-      padding: 10px;
-      text-align: left;
-      color: white;
-      font-size: 14px;
-    }
+.table-container {
+    margin-top: 25px;
+}
 
-    th {
-      background-color: #444;
-      color: #f1e60d;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-    tr:nth-child(even) {
-      background-color: #2e2e2e;
-    }
+th, td {
+    padding: 10px;
+    border: 1px solid #444;
+    font-size: 14px;
+}
 
-    .table-container {
-      max-height: 400px;
-      overflow-y: auto;
-      border: 1px solid #444;
-      border-radius: 6px;
-    }
+th {
+    background-color: #444;
+    color: #f1e60d;
+}
 
-    /* Modal */
-    #manageModal {
-      display: none;
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: #222;
-      padding: 20px;
-      width: 330px;
-      border-radius: 10px;
-      border: 1px solid #666;
-      z-index: 1000;
-      color: white;
-    }
-  </style>
-</head>
+/* ---------- POPUP MODAL ---------- */
 
-<body>
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 2000;
+}
 
-<a href="{{ url_for('search_jobs') }}" style="color: yellow;">Search GRN</a>
+#manageModal {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: #222;
+    padding: 20px;
+    width: 350px;
+    border-radius: 10px;
+    border: 1px solid #666;
+    z-index: 3000;
+    color: white;
+}
 
-<header>Jeddah Steel Pvt Ltd</header>
+#modalList div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+#modalList button {
+    margin-left: 6px;
+}
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="page-container">
 
 <h2>GRN:</h2>
 
-<form id="cuttingForm" method="POST" action="/submit">
-  <div class="form-container">
+<form method="POST" action="/submit">
+    <div class="form-container">
 
-    <!-- SECTION 1 -->
-    <div class="section">
-      <label for="JobNumber">Tm No:</label>
-      <input type="text" id="JobNumber" name="JobNumber"><br>
+        <!-- -------- SECTION 1 -------- -->
+        <div class="section">
 
-      <label for="SupplierCode">Supplier Code:</label>
-      <input type="text" id="SupplierCode" name="SupplierCode"><br>
+            <div class="form-row">
+                <label>Tm No:</label>
+                <input type="text" name="JobNumber">
+            </div>
 
-      <label for="BrokerCode">Broker Code:</label>
-      <input type="text" id="BrokerCode" name="BrokerCode"><br><br>
+            <div class="form-row">
+                <label>Supplier Code:</label>
+                <input type="text" name="SupplierCode">
+            </div>
 
-      <label for="Comments">Comments:</label><br>
-      <textarea id="Comments" name="Comments" rows="3"></textarea>
+            <div class="form-row">
+                <label>Broker Code:</label>
+                <input type="text" name="BrokerCode">
+            </div>
+
+            <div class="form-row">
+                <label>Comments:</label>
+                <textarea name="Comments"></textarea>
+            </div>
+
+        </div>
+
+        <!-- -------- SECTION 2 -------- -->
+        <div class="section">
+
+            <div class="form-row">
+                <label>Hardness:</label>
+                <input type="text" name="Hardness">
+            </div>
+
+            <div class="form-row">
+                <label>Weight:</label>
+                <input type="text" name="Weight">
+            </div>
+
+            <div class="form-row">
+                <label>Grade:</label>
+                <select id="Grade" name="Grade">
+                    <option disabled selected>Select Grade</option>
+                    <option>SPCC</option>
+                    <option>HARD</option>
+                    {% for g in grades %}
+                        <option>{{ g.value }}</option>
+                    {% endfor %}
+                    <option value="__add_new__">+ Add New</option>
+                </select>
+                <button type="button" class="manage-btn" onclick="openManageModal('grade')">⚙</button>
+            </div>
+
+            <div class="form-row">
+                <label>Item Code:</label>
+                <input type="text" name="itemcode">
+            </div>
+
+            <div class="form-row">
+                <label>UOM:</label>
+                <input type="text" name="UOM">
+            </div>
+
+            <div class="form-row">
+                <label>Batch No:</label>
+                <input type="text" name="BatchNo">
+            </div>
+
+            <input type="hidden" id="serial_num" name="serial_num">
+
+        </div>
+
+        <!-- -------- SECTION 3 -------- -->
+        <div class="section">
+
+            <div class="form-row">
+                <label>Manuf code:</label>
+                <input type="text" name="manufcode">
+            </div>
+
+            <div class="form-row">
+                <label>DC No:</label>
+                <input type="text" name="DC">
+            </div>
+
+            <div class="form-row">
+                <label>Coil Type:</label>
+                <select id="coil" name="coil">
+                    <option disabled selected>Select Coil Type</option>
+                    <option>CRC</option>
+                    <option>HRC</option>
+                    <option>GI</option>
+                    {% for c in coil_types %}
+                        <option>{{ c.value }}</option>
+                    {% endfor %}
+                    <option value="__add_new__">+ Add New</option>
+                </select>
+                <button type="button" class="manage-btn" onclick="openManageModal('coil')">⚙</button>
+            </div>
+
+            <div class="form-row">
+                <label>Supplier:</label>
+                <select id="supplier" name="supplier">
+                    <option disabled selected>Select Supplier</option>
+                    <option>AISHA STEEL LTD</option>
+                    <option>GUL DEEWAN</option>
+                    <option>CHINA</option>
+                    {% for s in suppliers %}
+                        <option>{{ s.value }}</option>
+                    {% endfor %}
+                    <option value="__add_new__">+ Add New</option>
+                </select>
+                <button type="button" class="manage-btn" onclick="openManageModal('supplier')">⚙</button>
+            </div>
+
+            <div class="form-row">
+                <label>Item Desc:</label>
+                <select id="ItemDesc" name="ItemDesc">
+                    <option disabled selected>Select Item Desc</option>
+                    <option>CRC</option>
+                    <option>HRC</option>
+                    <option>GI</option>
+                    {% for d in item_descs %}
+                        <option>{{ d.value }}</option>
+                    {% endfor %}
+                    <option value="__add_new__">+ Add New</option>
+                </select>
+                <button type="button" class="manage-btn" onclick="openManageModal('itemdesc')">⚙</button>
+            </div>
+
+        </div>
+
+        <!-- -------- SECTION 4 -------- -->
+        <div class="section">
+            <button type="submit" class="submit-btn">Submit</button><br><br>
+            <button type="reset" class="clear-btn">Clear</button>
+        </div>
+
     </div>
-
-    <!-- SECTION 2 -->
-    <div class="section">
-      <label for="Hardness">Hardness:</label>
-      <input type="text" id="Hardness" name="Hardness" required><br>
-
-      <label for="Weight">Weight:</label>
-      <input type="text" id="Weight" name="Weight" required><br>
-
-      <label for="Grade">Grade:</label>
-      <div style="display:flex; gap:6px;">
-        <select id="Grade" name="Grade">
-          <option disabled selected>Select Grade</option>
-
-          <!-- Built-in values -->
-          <option value="SPCC">SPCC</option>
-          <option value="HARD">HARD</option>
-
-          <!-- DB values -->
-          {% for g in grades %}
-          <option value="{{ g.value }}">{{ g.value }}</option>
-          {% endfor %}
-
-          <option value="__add_new__">+ Add New</option>
-        </select>
-
-        <button type="button" class="manage-btn" onclick="openManageModal('grade')">⚙</button>
-      </div>
-
-      <br>
-
-      <label for="itemcode">Item Code:</label>
-      <input type="text" id="itemcode" name="itemcode"><br>
-
-      <label for="UOM">UOM:</label>
-      <input type="text" id="UOM" name="UOM" required><br>
-
-      <input type="hidden" id="serial_num" name="serial_num" required><br>
-
-      <label for="BatchNo">Batch No:</label>
-      <input type="text" id="BatchNo" name="BatchNo" required>
-    </div>
-
-    <!-- SECTION 3 -->
-    <div class="section">
-      <label for="Manufcode">Manuf code:</label>
-      <input type="text" id="manufcode" name="manufcode" required><br>
-
-      <label for="DC">DC No:</label>
-      <input type="text" id="DC" name="DC" required><br><br>
-
-      <!-- COIL TYPE -->
-      <label for="coil">Coil Type:</label>
-      <div style="display:flex; gap:6px;">
-        <select id="coil" name="coil">
-          <option disabled selected>Select Coil Type</option>
-
-          <!-- Built-in -->
-          <option value="CRC">CRC</option>
-          <option value="HRC">HRC</option>
-          <option value="GI">GI</option>
-
-          <!-- DB -->
-          {% for c in coil_types %}
-          <option value="{{ c.value }}">{{ c.value }}</option>
-          {% endfor %}
-
-          <option value="__add_new__">+ Add New</option>
-        </select>
-
-        <button type="button" class="manage-btn" onclick="openManageModal('coil')">⚙</button>
-      </div>
-
-      <br>
-
-      <!-- SUPPLIER -->
-      <label for="supplier">Supplier:</label>
-      <div style="display:flex; gap:6px;">
-        <select id="supplier" name="supplier">
-          <option disabled selected>Select Supplier</option>
-
-          <!-- Built-in -->
-          <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
-          <option value="GUL DEEWAN">GUL DEEWAN</option>
-          <option value="CHINA">CHINA</option>
-
-          <!-- DB -->
-          {% for s in suppliers %}
-          <option value="{{ s.value }}">{{ s.value }}</option>
-          {% endfor %}
-
-          <option value="__add_new__">+ Add New</option>
-        </select>
-
-        <button type="button" class="manage-btn" onclick="openManageModal('supplier')">⚙</button>
-      </div>
-
-      <br>
-
-      <!-- ITEM DESC -->
-      <label for="ItemDesc">Item Desc:</label>
-      <div style="display:flex; gap:6px;">
-        <select id="ItemDesc" name="ItemDesc">
-          <option disabled selected>Select Item Desc</option>
-
-          <!-- Built-in -->
-          <option value="CRC">CRC</option>
-          <option value="HRC">HRC</option>
-          <option value="GI">GI</option>
-
-          <!-- DB -->
-          {% for d in item_descs %}
-          <option value="{{ d.value }}">{{ d.value }}</option>
-          {% endfor %}
-
-          <option value="__add_new__">+ Add New</option>
-        </select>
-
-        <button type="button" class="manage-btn" onclick="openManageModal('itemdesc')">⚙</button>
-      </div>
-    </div>
-
-    <!-- SECTION 4 -->
-    <div class="section" style="max-width:200px;">
-      <button type="submit" class="submit-btn">Submit</button><br><br>
-      <button type="reset" class="submit-btn" style="color:black;">Clear</button>
-    </div>
-
-  </div>
 </form>
 
-<h2>Submitted Records</h2>
-
-<div class="table-container">
-<table>
-  <thead>
-    <tr>
-      <th>Date & Time</th>
-      <th>Item Code</th>
-      <th>Manuf Code</th>
-      <th>Item Desc</th>
-      <th>UOM</th>
-      <th>Batch No</th>
-      <th>Weight</th>
-      <th>Hardness</th>
-      <th>Grade</th>
-      <th>Coil Type</th>
-      <th>Edit</th>
-      <th>Delete</th>
-    </tr>
-  </thead>
-
-  <tbody>
-  {% for r in records %}
-    <tr>
-      <td>{{ r.date_time }}</td>
-      <td>{{ r.itemcode }}</td>
-      <td>{{ r.manufcode }}</td>
-      <td>{{ r.item_desc }}</td>
-      <td>{{ r.uom }}</td>
-      <td>{{ r.batchNo }}</td>
-      <td>{{ r.weight }}</td>
-      <td>{{ r.hardness }}</td>
-      <td>{{ r.grade }}</td>
-      <td>{{ r.coil_type }}</td>
-
-      <td>
-        <a href="{{ url_for('edit_record', date_time=r.date_time) }}" style="color: yellow;">Edit</a>
-      </td>
-
-      <td>
-        <a href="{{ url_for('delete_record', date_time=r.date_time) }}" style="color: red;"
-           onclick="return confirm('Are you sure?');">Delete</a>
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
 </div>
 
-<!-- MANAGE OPTIONS MODAL -->
+<!-- ---------- MODAL + OVERLAY ---------- -->
+<div id="modalOverlay"></div>
+
 <div id="manageModal">
-  <h3 id="modalTitle">Manage</h3>
-  <div id="modalList"></div>
-  <br>
-  <button onclick="closeManageModal()">Close</button>
+    <h3 id="modalTitle">Manage</h3>
+    <div id="modalList"></div>
+    <button onclick="closeManageModal()" style="margin-top:12px;">Close</button>
 </div>
 
-<!-- ADD OPTION SCRIPT -->
-<script>
-async function enableAddOption(selectId, typeName) {
-    const select = document.getElementById(selectId);
+{% endblock %}
 
-    select.addEventListener('change', async function () {
-        if (this.value === "__add_new__") {
-            const newValue = prompt("Enter new value:");
 
-            if (newValue && newValue.trim() !== "") {
-
-                await fetch("/add_option", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({type: typeName, value: newValue})
-                });
-
-                const option = document.createElement("option");
-                option.value = newValue;
-                option.textContent = newValue;
-
-                this.insertBefore(option, this.lastElementChild);
-                this.value = newValue;
-            } else {
-                this.selectedIndex = 0;
-            }
-        }
-    });
-}
-
-enableAddOption("coil", "coil");
-enableAddOption("supplier", "supplier");
-enableAddOption("ItemDesc", "itemdesc");
-enableAddOption("Grade", "grade");
-</script>
-
-<!-- EDIT + DELETE OPTION SCRIPT -->
+{% block scripts %}
 <script>
 function openManageModal(typeName) {
+    document.getElementById("modalOverlay").style.display = "block";
     const modal = document.getElementById("manageModal");
+    modal.style.display = "block";
+
     const list = document.getElementById("modalList");
     const title = document.getElementById("modalTitle");
 
     title.innerText = "Manage " + typeName.toUpperCase();
+    list.innerHTML = "";
 
     fetch("/get_options/" + typeName)
         .then(res => res.json())
         .then(data => {
-            list.innerHTML = "";
-
             data.forEach(value => {
                 list.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <div>
                         <span>${value}</span>
                         <span>
                             <button onclick="editOption('${typeName}', '${value}')">Edit</button>
                             <button onclick="deleteOption('${typeName}', '${value}')">Delete</button>
                         </span>
-                    </div>
-                `;
+                    </div>`;
             });
         });
-
-    modal.style.display = "block";
 }
 
 function closeManageModal() {
+    document.getElementById("modalOverlay").style.display = "none";
     document.getElementById("manageModal").style.display = "none";
 }
 
 function editOption(typeName, oldValue) {
     const newValue = prompt("Enter new value:", oldValue);
-    if (!newValue || newValue.trim() === "") return;
+    if (!newValue) return;
 
     fetch("/edit_option", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({type: typeName, old: oldValue, new: newValue})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: typeName, old: oldValue, new: newValue })
     }).then(() => location.reload());
 }
 
@@ -431,41 +347,41 @@ function deleteOption(typeName, value) {
 
     fetch("/delete_option", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({type: typeName, value:value})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: typeName, value })
     }).then(() => location.reload());
 }
 </script>
 
-<!-- SERIAL NUMBER GENERATOR -->
+<!-- Serial Number Script -->
 <script>
 (function () {
     const coilSelect = document.getElementById('coil');
     const serialNumInput = document.getElementById('serial_num');
+
     const initialCounters = {{ counters|tojson }};
 
     function generateSerialNum() {
-      const coilValue = coilSelect.value;
+        const coilValue = coilSelect.value;
 
-      if (coilValue === "__add_new__") return;
-      if (!coilValue) return;
+        if (!coilValue || coilValue === "__add_new__") return;
 
-      const tpCoil = coilValue.charAt(0).toUpperCase();
-      const year = new Date().getFullYear().toString().slice(-2);
+        const tpCoil = coilValue.charAt(0).toUpperCase();
+        const year = new Date().getFullYear().toString().slice(-2);
 
-      let last = initialCounters[tpCoil] || 0;
-      last += 1;
-      initialCounters[tpCoil] = last;
+        let last = initialCounters[tpCoil] || 0;
+        last += 1;
+        initialCounters[tpCoil] = last;
 
-      const serial = String(last).padStart(5, '0');
-      const code = `${tpCoil}-010-${serial}-${year}`;
+        const serial = String(last).padStart(5, '0');
 
-      serialNumInput.value = code;
+        const code = `${tpCoil}-010-${serial}-${year}`;
+
+        serialNumInput.value = code;
     }
 
     coilSelect.addEventListener('change', generateSerialNum);
 })();
 </script>
 
-</body>
-</html>
+{% endblock %}

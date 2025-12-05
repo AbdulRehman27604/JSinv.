@@ -1,127 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Edit Record</title>
-  <style>
-    body {
-      background:#222;
-      color:white;
-      font-family:Arial, sans-serif;
-      padding:20px;
-    }
-    label {
-      display:block;
-      margin-top:10px;
-      margin-bottom:4px;
-      font-weight:bold;
-    }
-    input, select, textarea {
-      width: 300px;
-      padding:8px;
-      margin-bottom:10px;
-      background:#333;
-      color:white;
-      border:1px solid #666;
-      border-radius:3px;
-    }
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    button {
-      padding:10px 20px;
-      font-weight:bold;
-      background:white;
-      color:red;
-      border:none;
-      cursor:pointer;
-      margin-top:15px;
-    }
-  </style>
-</head>
+{% extends "layout.html" %}
+{% block content %}
 
-<body>
-  <h2>Edit Record</h2>
+<h2>Edit Record</h2>
 
-  <form method="POST" action="{{ url_for('update_record', date_time=record.date_time) }}">
+<form method="POST" action="/update/{{ record.date_time }}">
 
-    <!-- Tm No -->
-    <label>Tm No</label>
-    <input type="text" name="JobNumber" value="{{ record.job_num }}">
+    <label>Tm No:</label>
+    <input type="text" name="JobNumber" value="{{ record.job_num }}"><br>
 
-    <!-- Supplier Code -->
     <label>Supplier Code:</label>
-    <input type="text" name="SupplierCode" value="{{ record.supp_code }}">
+    <input type="text" name="SupplierCode" value="{{ record.supp_code }}"><br>
 
-    <!-- Broker Code -->
     <label>Broker Code:</label>
-    <input type="text" name="BrokerCode" value="{{ record.broker_code }}">
+    <input type="text" name="BrokerCode" value="{{ record.broker_code }}"><br>
 
-    <!-- Supplier Name -->
-    <label>Supplier Name:</label>
-    <select name="supplier">
-      <option value="{{ record.supplier_name }}" selected>{{ record.supplier_name }}</option>
-      <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
-      <option value="GUL DEEWAN">GUL DEEWAN</option>
-      <option value="CHINA">CHINA</option>
-    </select>
-
-    <!-- Hardness -->
-    <label>Hardness:</label>
-    <input type="text" name="Hardness" value="{{ record.hardness }}">
-
-    <!-- Weight -->
     <label>Weight:</label>
-    <input type="text" name="Weight" value="{{ record.weight }}">
+    <input type="text" name="Weight" value="{{ record.weight }}"><br>
 
-    <!-- Grade -->
+    <label>Hardness:</label>
+    <input type="text" name="Hardness" value="{{ record.hardness }}"><br>
+
     <label>Grade:</label>
-    <select name="Grade">
-      <option value="{{ record.grade }}" selected>{{ record.grade }}</option>
-      <option value="SPCC">SPCC</option>
-      <option value="HARD">HARD</option>
-    </select>
+    <input type="text" name="Grade" value="{{ record.grade }}"><br>
 
-    <!-- Item Code -->
+    <label>Batch No:</label>
+    <input type="text" name="BatchNo" value="{{ record.batchNo }}"><br>
+
     <label>Item Code:</label>
-    <input type="text" name="itemcode" value="{{ record.itemcode }}">
+    <input type="text" name="itemcode" value="{{ record.itemcode }}"><br>
 
-    <!-- Manuf code -->
-    <label>Manuf code:</label>
-    <input type="text" name="Tpipe" value="{{ record.tpipe }}">
-
-    <!-- DC No -->
-    <label>DC No:</label>
-    <input type="text" name="DC" value="{{ record.dc_num }}">
-
-    <!-- UOM -->
     <label>UOM:</label>
-    <input type="text" name="UOM" value="{{ record.uom }}">
+    <input type="text" name="UOM" value="{{ record.uom }}"><br>
 
-    <!-- Coil Type -->
-    <label>Coil Type:</label>
-    <select name="coil">
-      <option value="{{ record.coil_type }}" selected>{{ record.coil_type }}</option>
-      <option value="CRC">CRC</option>
-      <option value="HRC">HRC</option>
-      <option value="GI">GI</option>
-    </select>
-
-    <!-- Item Desc -->
     <label>Item Desc:</label>
-    <select name="ItemDesc">
-      <option value="{{ record.item_desc }}" selected>{{ record.item_desc }}</option>
-      <option value="CRC">CRC</option>
-      <option value="HRC">HRC</option>
-      <option value="GI">GI</option>
-    </select>
+    <input type="text" name="ItemDesc" value="{{ record.item_desc }}"><br>
 
-    <!-- Comments -->
-    <label>Comments:</label>
-    <textarea name="Comments">{{ record.comments }}</textarea>
+    <button type="submit">Update</button>
+</form>
 
-    <button type="submit">Save Changes</button>
-  </form>
-
-</body>
-</html>
+{% endblock %}

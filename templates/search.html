@@ -1,111 +1,26 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Jobs</title>
+{% extends "layout.html" %}
+{% block content %}
 
-  <style>
-    * { box-sizing: border-box; }
+<h2>Search GRN</h2>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #1C1C1C;
-      font-family: 'Poppins', sans-serif;
-      padding: 20px;
-      color: white;
-    }
+<!-- SEARCH BOX -->
+<div class="search-container">
+    <form action="{{ url_for('search_jobs') }}" method="POST" class="search-form">
+        <label for="sdate">Select Date</label>
+        <input type="date" id="sdate" name="sdate" required>
+        <button type="submit" class="search-btn">Search</button>
 
-    .search-box {
-      width: 100%;
-      max-width: 800px;
-      padding: 40px 35px;
-      border-radius: 15px;
-      background: #303030;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      margin-bottom: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      text-align: center;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      background-color: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-    }
-
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-
-      border: none;
-      border-radius: 8px;
-      color: #2B2637;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .error-message {
-      margin-top: 15px;
-      color: #ff6b6b;
-      display: {% if msg %}block{% else %}none{% endif %};
-    }
-
-    /* TABLE STYLE */
-    table {
-      width: 100%;
-      max-width: 900px;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: #2b2b2b;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #444;
-      color:yellow;
-    }
-
-    th {
-      background: gray;
-      color: #1C1C1C;
-      font-weight: bold;
-    }
-
-    tr:hover {
-      background: #3a3a3a;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="search-box">
-    <h1>Search Previous Jobs</h1>
-    <p class="subtitle">Enter a date</p>
-
-    <form action="{{ url_for('search_jobs') }}" method="POST">
-      <input type="date" id="sdate" name="sdate" required>
-      <button type="submit">Search</button>
-      <p class="error-message">{{ msg }}</p>
+        {% if msg %}
+        <p class="error-msg">{{ msg }}</p>
+        {% endif %}
     </form>
-  </div>
+</div>
 
-  {% if results %}
-  <table>
-    <thead>
-      <tr>
+<!-- RESULTS TABLE -->
+{% if results %}
+<table class="records-table">
+  <thead>
+    <tr>
       <th>Date & Time</th>
       <th>Item Code</th>
       <th>Manuf Code</th>
@@ -117,41 +32,35 @@
       <th>Grade</th>
       <th>Coil Type</th>
     </tr>
-    </thead>
+  </thead>
 
-    <tbody>
-      {% for r in results %}
-      <tr class="job-row" data-date="{{ r.date_time }}">
-        <td>{{ r.date_time }}</td>
-        <td>{{ r.itemcode }}</td>
-        <td>{{ r.tpipe }}</td>
-        <td>{{ r.item_desc }}</td>
-        <td>{{ r.uom }}</td>
-        <td>{{ r.batchNo }}</td>
-        <td>{{ r.weight }}</td>
-        <td>{{ r.hardness }}</td>
-        <td>{{ r.grade }}</td>
-        <td>{{ r.coil_type }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
+  <tbody>
+    {% for r in results %}
+    <tr class="job-row" data-date="{{ r.date_time }}">
+      <td>{{ r.date_time }}</td>
+      <td>{{ r.itemcode }}</td>
+      <td>{{ r.manufcode }}</td>
+      <td>{{ r.item_desc }}</td>
+      <td>{{ r.uom }}</td>
+      <td>{{ r.batchNo }}</td>
+      <td>{{ r.weight }}</td>
+      <td>{{ r.hardness }}</td>
+      <td>{{ r.grade }}</td>
+      <td>{{ r.coil_type }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 
-  </table>
-  {% endif %}
-
-
-  <script>
-  document.querySelectorAll(".job-row").forEach(row => {
+<!-- CLICK ROW TO OPEN JOB SHEET -->
+<script>
+document.querySelectorAll(".job-row").forEach(row => {
     row.addEventListener("click", () => {
-      const date = row.dataset.date;
-      // Redirect to Flask page
-      window.location = "/job_sheet/" + encodeURIComponent(date);
+        const date = row.dataset.date;
+        window.location = "/job_sheet/" + encodeURIComponent(date);
     });
-  });
+});
 </script>
 
-
-  <!--<button onclick="window.print()" class="print-btn">Print</button>
-
-</body>
-</html>
+{% endblock %}

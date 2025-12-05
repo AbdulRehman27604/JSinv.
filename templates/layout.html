@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title if title else "Jeddah Steel" }}</title>
+
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .records-table {
+  width: 95%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background: #2b2b2b;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.records-table th {
+  background: #555;
+  color: yellow;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.records-table td {
+  padding: 12px;
+  border-bottom: 1px solid #444;
+  color: white;
+}
+
+.records-table tr:hover {
+  background: #3a3a3a;
+}
+
+.edit-btn {
+  color: #d4ff00;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.edit-btn:hover {
+  color: #ffff66;
+}
+
+.delete-btn {
+  color: red;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.delete-btn:hover {
+  color: #ff4d4d;
+}
+
+/* Search Container */
+.search-container {
+  width: 95%;
+  max-width: 500px;
+  margin: 20px auto;
+  background: #2b2b2b;
+  padding: 20px 25px;
+  border-radius: 12px;
+  border: 1px solid #444;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.search-form label {
+  color: yellow;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.search-form input[type="date"] {
+  padding: 10px;
+  font-size: 15px;
+  background: #1c1c1c;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: white;
+}
+
+.search-btn {
+  background: yellow;
+  color: black;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.search-btn:hover {
+  background: #e6e600;
+}
+
+.error-msg {
+  color: #ff5c5c;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Table already in your layout.css (reused) */
+.home-container {
+  margin: 80px auto;
+  padding: 40px 50px;
+  max-width: 700px;
+  text-align: center;
+  background: #2b2b2b;
+  border-radius: 15px;
+  border: 1px solid #444;
+  box-shadow: 0px 0px 25px rgba(0,0,0,0.4);
+}
+
+.home-container h1 {
+  color: yellow;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.home-container .subtitle {
+  color: #ddd;
+  font-size: 18px;
+}
+
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1f1f1f;
+            padding: 12px 25px;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            color: #f1e60d;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .nav-center a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 17px;
+        }
+
+        .nav-center a:hover { color: #f1e60d; }
+        .logout-btn { color: #ff4c4c; font-weight: bold; font-size: 17px; }
+        .logout-btn:hover { color: #ff6b6b; }
+    </style>
+
+    {% block extra_styles %}{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="nav-left"><span class="brand">Jeddah Steel Pvt Ltd</span></div>
+
+  <div class="nav-center">
+    <a href="/home">Home</a>
+    <a href="/grn">GRN</a>
+    <a href="/records">Submitted Records</a>
+    <a href="/search">Search GRN</a>
+  </div>
+
+  <div class="nav-right">
+    <a href="/logout" class="logout-btn">Logout</a>
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div style="margin-top:20px;">
+    {% block content %}{% endblock %}
+</div>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
+
