@@ -65,15 +65,22 @@
     }
 
     button {
-      width: 100%;
-      max-width: 120px;
-      padding: 10px;
+      padding: 6px 10px;
       border: none;
-      font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    .manage-btn {
+      background-color: #555;
+      color: yellow;
+    }
+
+    .submit-btn {
       background-color: white;
       color: red;
+      width: 120px;
     }
 
     table {
@@ -106,6 +113,21 @@
       overflow-y: auto;
       border: 1px solid #444;
       border-radius: 6px;
+    }
+
+    /* Modal */
+    #manageModal {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      padding: 20px;
+      width: 330px;
+      border-radius: 10px;
+      border: 1px solid #666;
+      z-index: 1000;
+      color: white;
     }
   </style>
 </head>
@@ -145,11 +167,26 @@
       <input type="text" id="Weight" name="Weight" required><br>
 
       <label for="Grade">Grade:</label>
-      <select id="Grade" name="Grade">
-        <option disabled selected>Select Grade</option>
-        <option value="SPCC">SPCC</option>
-        <option value="HARD">HARD</option>
-      </select><br><br>
+      <div style="display:flex; gap:6px;">
+        <select id="Grade" name="Grade">
+          <option disabled selected>Select Grade</option>
+
+          <!-- Built-in values -->
+          <option value="SPCC">SPCC</option>
+          <option value="HARD">HARD</option>
+
+          <!-- DB values -->
+          {% for g in grades %}
+          <option value="{{ g.value }}">{{ g.value }}</option>
+          {% endfor %}
+
+          <option value="__add_new__">+ Add New</option>
+        </select>
+
+        <button type="button" class="manage-btn" onclick="openManageModal('grade')">⚙</button>
+      </div>
+
+      <br>
 
       <label for="itemcode">Item Code:</label>
       <input type="text" id="itemcode" name="itemcode"><br>
@@ -164,42 +201,88 @@
     </div>
 
     <!-- SECTION 3 -->
-    <div class="section" style="max-width:220px;">
+    <div class="section">
       <label for="Manufcode">Manuf code:</label>
       <input type="text" id="manufcode" name="manufcode" required><br>
 
       <label for="DC">DC No:</label>
       <input type="text" id="DC" name="DC" required><br><br>
 
+      <!-- COIL TYPE -->
       <label for="coil">Coil Type:</label>
-      <select id="coil" name="coil">
-        <option disabled selected>Select Coil Type</option>
-        <option value="CRC">CRC</option>
-        <option value="HRC">HRC</option>
-        <option value="GI">GI</option>
-      </select><br><br>
+      <div style="display:flex; gap:6px;">
+        <select id="coil" name="coil">
+          <option disabled selected>Select Coil Type</option>
 
-      <label for="supplier">Supplier Name:</label>
-      <select id="supplier" name="supplier">
-        <option disabled selected>Select Supplier</option>
-        <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
-        <option value="GUL DEEWAN">GUL DEEWAN</option>
-        <option value="CHINA">CHINA</option>
-      </select><br><br>
+          <!-- Built-in -->
+          <option value="CRC">CRC</option>
+          <option value="HRC">HRC</option>
+          <option value="GI">GI</option>
 
+          <!-- DB -->
+          {% for c in coil_types %}
+          <option value="{{ c.value }}">{{ c.value }}</option>
+          {% endfor %}
+
+          <option value="__add_new__">+ Add New</option>
+        </select>
+
+        <button type="button" class="manage-btn" onclick="openManageModal('coil')">⚙</button>
+      </div>
+
+      <br>
+
+      <!-- SUPPLIER -->
+      <label for="supplier">Supplier:</label>
+      <div style="display:flex; gap:6px;">
+        <select id="supplier" name="supplier">
+          <option disabled selected>Select Supplier</option>
+
+          <!-- Built-in -->
+          <option value="AISHA STEEL LTD">AISHA STEEL LTD</option>
+          <option value="GUL DEEWAN">GUL DEEWAN</option>
+          <option value="CHINA">CHINA</option>
+
+          <!-- DB -->
+          {% for s in suppliers %}
+          <option value="{{ s.value }}">{{ s.value }}</option>
+          {% endfor %}
+
+          <option value="__add_new__">+ Add New</option>
+        </select>
+
+        <button type="button" class="manage-btn" onclick="openManageModal('supplier')">⚙</button>
+      </div>
+
+      <br>
+
+      <!-- ITEM DESC -->
       <label for="ItemDesc">Item Desc:</label>
-      <select id="ItemDesc" name="ItemDesc">
-        <option disabled selected>Select the Item Desc</option>
-        <option value="CRC">CRC</option>
-        <option value="HRC">HRC</option>
-        <option value="GI">GI</option>
-      </select>
+      <div style="display:flex; gap:6px;">
+        <select id="ItemDesc" name="ItemDesc">
+          <option disabled selected>Select Item Desc</option>
+
+          <!-- Built-in -->
+          <option value="CRC">CRC</option>
+          <option value="HRC">HRC</option>
+          <option value="GI">GI</option>
+
+          <!-- DB -->
+          {% for d in item_descs %}
+          <option value="{{ d.value }}">{{ d.value }}</option>
+          {% endfor %}
+
+          <option value="__add_new__">+ Add New</option>
+        </select>
+
+        <button type="button" class="manage-btn" onclick="openManageModal('itemdesc')">⚙</button>
+      </div>
     </div>
 
     <!-- SECTION 4 -->
     <div class="section" style="max-width:200px;">
-      <button type="submit">Submit</button><br><br>
-      <button type="reset">Clear</button>
+      <button type="submit" class="submit-btn">Submit</button><br><br>
+      <button type="reset" class="submit-btn" style="color:black;">Clear</button>
     </div>
 
   </div>
@@ -241,16 +324,12 @@
       <td>{{ r.coil_type }}</td>
 
       <td>
-        <a href="{{ url_for('edit_record', date_time=r.date_time) }}"
-           style="color: yellow; font-weight: bold;">Edit</a>
+        <a href="{{ url_for('edit_record', date_time=r.date_time) }}" style="color: yellow;">Edit</a>
       </td>
 
       <td>
-        <a href="{{ url_for('delete_record', date_time=r.date_time) }}"
-           style="color: red; font-weight: bold;"
-           onclick="return confirm('Are you sure you want to delete this record?');">
-           Delete
-        </a>
+        <a href="{{ url_for('delete_record', date_time=r.date_time) }}" style="color: red;"
+           onclick="return confirm('Are you sure?');">Delete</a>
       </td>
     </tr>
   {% endfor %}
@@ -258,15 +337,117 @@
 </table>
 </div>
 
-<script>
-  (function () {
-    const coilSelect      = document.getElementById('coil');
-    const serialNumInput  = document.getElementById('serial_num');
+<!-- MANAGE OPTIONS MODAL -->
+<div id="manageModal">
+  <h3 id="modalTitle">Manage</h3>
+  <div id="modalList"></div>
+  <br>
+  <button onclick="closeManageModal()">Close</button>
+</div>
 
+<!-- ADD OPTION SCRIPT -->
+<script>
+async function enableAddOption(selectId, typeName) {
+    const select = document.getElementById(selectId);
+
+    select.addEventListener('change', async function () {
+        if (this.value === "__add_new__") {
+            const newValue = prompt("Enter new value:");
+
+            if (newValue && newValue.trim() !== "") {
+
+                await fetch("/add_option", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({type: typeName, value: newValue})
+                });
+
+                const option = document.createElement("option");
+                option.value = newValue;
+                option.textContent = newValue;
+
+                this.insertBefore(option, this.lastElementChild);
+                this.value = newValue;
+            } else {
+                this.selectedIndex = 0;
+            }
+        }
+    });
+}
+
+enableAddOption("coil", "coil");
+enableAddOption("supplier", "supplier");
+enableAddOption("ItemDesc", "itemdesc");
+enableAddOption("Grade", "grade");
+</script>
+
+<!-- EDIT + DELETE OPTION SCRIPT -->
+<script>
+function openManageModal(typeName) {
+    const modal = document.getElementById("manageModal");
+    const list = document.getElementById("modalList");
+    const title = document.getElementById("modalTitle");
+
+    title.innerText = "Manage " + typeName.toUpperCase();
+
+    fetch("/get_options/" + typeName)
+        .then(res => res.json())
+        .then(data => {
+            list.innerHTML = "";
+
+            data.forEach(value => {
+                list.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span>${value}</span>
+                        <span>
+                            <button onclick="editOption('${typeName}', '${value}')">Edit</button>
+                            <button onclick="deleteOption('${typeName}', '${value}')">Delete</button>
+                        </span>
+                    </div>
+                `;
+            });
+        });
+
+    modal.style.display = "block";
+}
+
+function closeManageModal() {
+    document.getElementById("manageModal").style.display = "none";
+}
+
+function editOption(typeName, oldValue) {
+    const newValue = prompt("Enter new value:", oldValue);
+    if (!newValue || newValue.trim() === "") return;
+
+    fetch("/edit_option", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({type: typeName, old: oldValue, new: newValue})
+    }).then(() => location.reload());
+}
+
+function deleteOption(typeName, value) {
+    if (!confirm("Delete '" + value + "'?")) return;
+
+    fetch("/delete_option", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({type: typeName, value:value})
+    }).then(() => location.reload());
+}
+</script>
+
+<!-- SERIAL NUMBER GENERATOR -->
+<script>
+(function () {
+    const coilSelect = document.getElementById('coil');
+    const serialNumInput = document.getElementById('serial_num');
     const initialCounters = {{ counters|tojson }};
 
     function generateSerialNum() {
       const coilValue = coilSelect.value;
+
+      if (coilValue === "__add_new__") return;
       if (!coilValue) return;
 
       const tpCoil = coilValue.charAt(0).toUpperCase();
@@ -283,7 +464,7 @@
     }
 
     coilSelect.addEventListener('change', generateSerialNum);
-  })();
+})();
 </script>
 
 </body>

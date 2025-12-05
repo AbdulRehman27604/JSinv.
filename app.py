@@ -4,10 +4,34 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from collections import defaultdict
 
+from flask import jsonify
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Stack2764@localhost/Tracker'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Abdare123@localhost/Tracker'
 app.secret_key = "secret123"
 db = SQLAlchemy(app)
+
+
+class CoilType(db.Model):
+    __tablename__ = 'coil_types'
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(100), unique=True, nullable=False)
+
+class ItemDescription(db.Model):
+    __tablename__ = 'item_descriptions'
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(100), unique=True, nullable=False)
+
+class Supplier(db.Model):
+    __tablename__ = 'suppliers'
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(100), unique=True, nullable=False)
+
+class Grade(db.Model):
+    __tablename__ = 'grades'
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(100), unique=True, nullable=False)
+
 
 
 class inventory(db.Model):
@@ -59,7 +83,16 @@ def main_page():
                 num = int(m.group(2))
                 counters[prefix] = max(counters[prefix], num)
 
-    return render_template("main.html", records=records, counters=dict(counters))
+    return render_template(
+        "main.html",
+        records=records,
+        counters=dict(counters),
+        coil_types=CoilType.query.all(),
+        suppliers=Supplier.query.all(),
+        grades=Grade.query.all(),
+        item_descs=ItemDescription.query.all()
+    )
+
 
 
 @app.route("/submit", methods=["POST"])
@@ -183,6 +216,96 @@ def job_sheet(date_time):
         return "Record not found", 404
 
     return render_template("job_sheet.html", r=row)
+
+# add buttin path
+@app.route("/add_option", methods=["POST"])
+def add_option():
+    data = request.get_json()
+    option_type = data.get("type")
+    value = data.get("value").strip()
+
+    # Determine which table to use
+    if option_type == "coil":
+        new_entry = CoilType(value=value)
+    elif option_type == "supplier":
+        new_entry = Supplier(value=value)
+    elif option_type == "itemdesc":
+        new_entry = ItemDescription(value=value)
+    elif option_type == "grade":
+        new_entry = Grade(value=value)
+    else:
+        return {"status": "error", "message": "Invalid option type"}
+
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.route("/get_options/<type_name>")
+def get_options(type_name):
+    if type_name == "coil":
+        values = [c.value for c in CoilType.query.all()]
+    elif type_name == "supplier":
+        values = [s.value for s in Supplier.query.all()]
+    elif type_name == "grade":
+        values = [g.value for g in Grade.query.all()]
+    elif type_name == "itemdesc":
+        values = [d.value for d in ItemDescription.query.all()]
+    else:
+        values = []
+
+    return jsonify(values)
+
+
+@app.route("/edit_option", methods=["POST"])
+def edit_option():
+    data = request.get_json()
+    t = data.get("type")
+    old_value = data.get("old")
+    new_value = data.get("new")
+
+    if t == "coil":
+        entry = CoilType.query.filter_by(value=old_value).first()
+    elif t == "supplier":
+        entry = Supplier.query.filter_by(value=old_value).first()
+    elif t == "grade":
+        entry = Grade.query.filter_by(value=old_value).first()
+    elif t == "itemdesc":
+        entry = ItemDescription.query.filter_by(value=old_value).first()
+    else:
+        return jsonify({"status": "error", "message": "Invalid type"})
+
+    if entry:
+        entry.value = new_value.strip()
+        db.session.commit()
+
+    return jsonify({"status": "success"})
+
+
+@app.route("/delete_option", methods=["POST"])
+def delete_option():
+    data = request.get_json()
+    t = data.get("type")
+    value = data.get("value")
+
+    if t == "coil":
+        entry = CoilType.query.filter_by(value=value).first()
+    elif t == "supplier":
+        entry = Supplier.query.filter_by(value=value).first()
+    elif t == "grade":
+        entry = Grade.query.filter_by(value=value).first()
+    elif t == "itemdesc":
+        entry = ItemDescription.query.filter_by(value=value).first()
+    else:
+        return jsonify({"status": "error", "message": "Invalid type"})
+
+    if entry:
+        db.session.delete(entry)
+        db.session.commit()
+
+    return jsonify({"status": "success"})
 
 
 
