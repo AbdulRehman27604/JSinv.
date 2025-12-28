@@ -1,4 +1,5 @@
 import re
+import os
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -6,8 +7,11 @@ from collections import defaultdict
 from flask import jsonify
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Stack2764@localhost/Tracker'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://arzdb_user:oHoZ2bnCH5c6hxJFs4F32dQXwpppk2Qm@dpg-d58cpfur433s73f6ml3g-a.oregon-postgres.render.com/arzdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Stack2764@localhost/Tracker'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    "DATABASE_URL",
+    "sqlite:///local.db"
+)
 app.secret_key = "secret123"
 db = SQLAlchemy(app)
 

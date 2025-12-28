@@ -1,52 +1,69 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
-
 <style>
-    body {
+    /* LOCK PAGE TO ONE VIEWPORT */
+    html, body {
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
         background: #F8F5E9;
         font-family: Arial, Helvetica, sans-serif;
-        padding: 20px;
         color: #000;
     }
 
-    .sheet-container {
-        width: 97%;
-        border: 2px solid black;
-        padding: 25px;
-        margin-top: 30px;
-        background: white;
+    /* PAGE WRAPPER */
+    .page-wrapper {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
+    /* MAIN SHEET */
+    .sheet-container {
+        width: 90%;
+        max-width: 1200px;
+        height: 100%;
+        max-height: 100%;
+        border: 2px solid black;
+        padding: 25px;
+        background: white;
+        overflow: hidden; /* enforce one page */
+        box-sizing: border-box;
+    }
+
+    /* TITLES */
     .serial {
-        font-size: 55px;
-        font-weight: bold;
+        font-size: 48px;
+        font-weight: 700;
         text-align: center;
-        margin-bottom: 30px;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
+        margin-bottom: 6px;
     }
 
     .coil-desc {
-        font-size: 38px;
-        font-weight: bold;
+        font-size: 28px;
+        font-weight: 600;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
+    /* SECTION DIVIDER */
     .line {
-        width: 100%;
-        height: 2px;
-        background: black;
-        margin: 20px 0;
+        height: 1px;
+        background: #000;
+        margin: 18px 0;
     }
 
+    /* INFO ROW */
     .row {
         display: flex;
         justify-content: space-between;
-        width: 100%;
-        font-size: 22px;
-        margin: 6px 0;
+        font-size: 18px;
+        margin: 10px 0;
     }
 
     .row div {
@@ -57,30 +74,56 @@
     .row div:nth-child(3) { text-align: right; }
 
     .title {
-        font-weight: bold;
-        text-decoration: underline;
+        font-size: 14px;
+        font-weight: 600;
+        color: #444;
+        display: block;
+        margin-bottom: 2px;
     }
 
+    /* TABLES */
     table {
         width: 100%;
-        margin-top: 20px;
-        font-size: 24px;
+        margin-top: 10px;
+        font-size: 18px;
         border-collapse: collapse;
-        text-align: center;
     }
 
-    td {
-        padding: 8px 0;
+    th, td {
+        padding: 6px 8px;
     }
 
+    th {
+        text-align: left;
+    }
+
+    /* TABLE HEADERS */
     .col-title {
-        font-weight: bold;
-        text-decoration: underline;
-        padding-bottom: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #444;
         white-space: nowrap;
     }
 
-    button {
+    /* TABLE VALUES */
+    table tr:nth-child(2) td {
+        font-weight: 500;
+        color: #000;
+    }
+
+    /* COMMENTS */
+    table.comments td {
+        text-align: left;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    /* PRINT BUTTON */
+    .printbutton {
+        position: fixed;
+        bottom: 16px;
+        left: 16px;
         padding: 8px 16px;
         border-radius: 8px;
         border: none;
@@ -89,127 +132,129 @@
         font-size: 14px;
         font-weight: bold;
         cursor: pointer;
-        margin-top: 30px;
+        z-index: 1000;
     }
 
+    /* BACK BUTTON */
     .back-btn {
-        background: black;
+        all: unset;
         position: fixed;
-        top: 10px;
-        left: 10px;
-        padding: 6px 10px;
-        font-size: 18px;
-        cursor: pointer;
+        bottom: 16px;
+        right: 16px;
+        background: black;
         color: white;
-        width: auto;
-        margin: 0;
-        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        z-index: 1000;
     }
 
+    /* PRINT CLEANUP */
     @media print {
-        button,
+        .printbutton,
         .back-btn {
-            display: none;
+            display: none !important;
         }
     }
 </style>
 
-<div class="sheet-container">
+<div class="page-wrapper">
+    <div class="sheet-container">
 
-    <!-- SERIAL NUMBER -->
-    <div class="serial">{{ r.serial_num }}</div>
+        <!-- SERIAL -->
+        <div class="serial">{{ r.serial_num }}</div>
+        <div class="coil-desc">{{ r.item_desc }}</div>
 
-    <!-- ITEM DESCRIPTION (main title) -->
-    <div class="coil-desc">{{ r.item_desc }}</div>
+        <div class="line"></div>
 
-    <div class="line"></div>
+        <!-- TM / SUPPLIER / BROKER / COIL -->
+        <table>
+            <tr>
+                <th class="col-title">Tm No</th>
+                <th class="col-title">Supplier Code</th>
+                <th class="col-title">Broker Code</th>
+                <th class="col-title">Coil Type</th>
+            </tr>
+            <tr>
+                <td>{{ r.job_num }}</td>
+                <td>{{ r.supp_code }}</td>
+                <td>{{ r.broker_code }}</td>
+                <td>{{ r.coil_type }}</td>
+            </tr>
+        </table>
 
-    <!-- TM / SUPPLIER CODE / BROKER CODE / COIL TYPE -->
-    <table>
-        <tr>
-            <td class="col-title">Tm No</td>
-            <td class="col-title">Supplier Code</td>
-            <td class="col-title">Broker Code</td>
-            <td class="col-title">Coil Type</td>
-        </tr>
-        <tr>
-            <td>{{ r.job_num }}</td>
-            <td>{{ r.supp_code }}</td>
-            <td>{{ r.broker_code }}</td>
-            <td>{{ r.coil_type }}</td>
-        </tr>
-    </table>
+        <div class="line"></div>
 
-    <div class="line"></div>
-
-    <!-- SUPPLIER / DC NO / DATE -->
-    <div class="row">
-        <div>
-            <span class="title">Supplier</span><br>
-            {{ r.supplier_name }}
+        <!-- SUPPLIER / DC / DATE -->
+        <div class="row">
+            <div>
+                <span class="title">Supplier</span>
+                {{ r.supplier_name }}
+            </div>
+            <div>
+                <span class="title">DC No</span>
+                {{ r.dc_num }}
+            </div>
+            <div>
+                <span class="title">DC Date</span>
+                {{ r.date_time.strftime('%d/%m/%Y') }}
+            </div>
         </div>
 
-        <div>
-            <span class="title">DC No</span><br>
-            {{ r.dc_num }}
-        </div>
+        <div class="line"></div>
 
-        <div>
-            <span class="title">DC Date</span><br>
-            {{ r.date_time.strftime('%d/%m/%Y') }}
-        </div>
+        <!-- BATCH / MANUF / WEIGHT / HARDNESS -->
+        <table>
+            <tr>
+                <th class="col-title">Batch No</th>
+                <th class="col-title">Manufacture Code</th>
+                <th class="col-title">Weight</th>
+                <th class="col-title">Hardness</th>
+            </tr>
+            <tr>
+                <td>{{ r.batchNo }}</td>
+                <td>{{ r.manufcode }}</td>
+                <td>{{ "{:,}".format(r.weight) }}</td>
+                <td>{{ r.hardness }}</td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+
+        <!-- GRADE / ITEM / UOM -->
+        <table>
+            <tr>
+                <th class="col-title">Grade</th>
+                <th class="col-title">Item Code</th>
+                <th class="col-title">UOM</th>
+                <th class="col-title">Item Desc</th>
+            </tr>
+            <tr>
+                <td>{{ r.grade }}</td>
+                <td>{{ r.itemcode }}</td>
+                <td>{{ r.uom }}</td>
+                <td>{{ r.item_desc }}</td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+
+        <!-- COMMENTS -->
+        <table class="comments">
+            <tr>
+                <th class="col-title">Comments</th>
+            </tr>
+            <tr>
+                <td>{{ r.comments }}</td>
+            </tr>
+        </table>
+
     </div>
-
-    <div class="line"></div>
-
-    <!-- BATCH / MANUF CODE / WEIGHT / HARDNESS -->
-    <table>
-        <tr>
-            <td class="col-title">Batch No</td>
-            <td class="col-title">Manufacture Code</td>
-            <td class="col-title">Weight</td>
-            <td class="col-title">Hardness</td>
-        </tr>
-        <tr>
-            <td>{{ r.batchNo }}</td>
-            <td>{{ r.manufcode }}</td>
-            <td>{{ "{:,}".format(r.weight) }}</td>
-            <td>{{ r.hardness }}</td>
-        </tr>
-    </table>
-
-    <div class="line"></div>
-
-    <!-- GRADE / ITEM CODE / UOM / ITEM DESC -->
-    <table>
-        <tr>
-            <td class="col-title">Grade</td>
-            <td class="col-title">Item Code</td>
-            <td class="col-title">UOM</td>
-            <td class="col-title">Item Desc</td>
-        </tr>
-        <tr>
-            <td>{{ r.grade }}</td>
-            <td>{{ r.itemcode }}</td>
-            <td>{{ r.uom }}</td>
-            <td>{{ r.item_desc }}</td>
-        </tr>
-    </table>
-
-    <div class="line"></div>
-
-    <!-- COMMENTS -->
-    <table>
-        <tr>
-            <td class="col-title">Comments</td>
-        </tr>
-        <tr>
-            <td>{{ r.comments }}</td>
-        </tr>
-    </table>
-
 </div>
 
-<button onclick="window.print()">Print</button>
+<button class="printbutton" onclick="window.print()">Print</button>
 <button class="back-btn" onclick="window.location.href='{{ url_for('records_page') }}'">← Back</button>
+
 {% endblock %}

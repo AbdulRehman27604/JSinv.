@@ -353,6 +353,53 @@ function deleteOption(typeName, value) {
 }
 </script>
 
+<script>
+function handleAddNew(selectId, typeName) {
+    const select = document.getElementById(selectId);
+
+    select.addEventListener("change", function () {
+        if (this.value !== "__add_new__") return;
+
+        const newValue = prompt("Enter new value:");
+        if (!newValue) {
+            this.selectedIndex = 0;
+            return;
+        }
+
+        fetch("/add_option", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: typeName,
+                value: newValue
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                const opt = document.createElement("option");
+                opt.text = newValue;
+                opt.value = newValue;
+
+                // Insert before "+ Add New"
+                select.insertBefore(opt, select.lastElementChild);
+                select.value = newValue;
+            } else {
+                alert("Error: " + data.message);
+                select.selectedIndex = 0;
+            }
+        });
+    });
+}
+
+// Attach to dropdowns
+handleAddNew("coil", "coil");
+handleAddNew("supplier", "supplier");
+handleAddNew("Grade", "grade");
+handleAddNew("ItemDesc", "itemdesc");
+</script>
+
+
 <!-- Serial Number Script -->
 <script>
 (function () {
