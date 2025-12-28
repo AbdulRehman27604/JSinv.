@@ -6,7 +6,8 @@ from collections import defaultdict
 from flask import jsonify
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Abdare123@localhost/Tracker'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Stack2764@localhost/Tracker'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://arzdb_user:oHoZ2bnCH5c6hxJFs4F32dQXwpppk2Qm@dpg-d58cpfur433s73f6ml3g-a.oregon-postgres.render.com/arzdb'
 app.secret_key = "secret123"
 db = SQLAlchemy(app)
 
@@ -60,10 +61,6 @@ class inventory(db.Model):
     uom = db.Column(db.String(50))
     item_desc = db.Column(db.String(200))
 
-@app.route("/")
-def homepage():
-    return redirect("/home")
-
 
 @app.route("/home")
 def home():
@@ -79,7 +76,7 @@ def home():
 def login():
     if request.method == 'POST':
         if request.form['email'] == "a@m.com" and request.form['password'] == "1":
-            return redirect("/main")
+            return redirect("/home")
     return render_template('login.html')
 
 
