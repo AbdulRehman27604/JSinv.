@@ -1,0 +1,306 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+  body {
+    background: #f8f5e9;
+    color: black;
+  }
+
+  .sheet-page {
+    padding: 25px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sheet {
+    width: 950px;
+    min-height: 850px;
+    background: #fffef2;
+    border: 2px solid #333;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .sheet-title {
+    border: 2px solid #333;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 12px;
+    padding: 6px;
+    margin-bottom: 10px;
+  }
+
+  .info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px dotted #777;
+    padding: 7px 0;
+    font-size: 18px;
+  }
+
+  .info-row.three {
+    grid-template-columns: 1fr 1.4fr 1fr;
+  }
+
+  .label {
+    font-weight: bold;
+    margin-right: 12px;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .cut-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 17px;
+  }
+
+  .cut-table th {
+    background: #fff0c8;
+    border: 1px solid #555;
+    padding: 6px;
+    text-align: left;
+  }
+
+  .cut-table td {
+    border-bottom: 1px dotted #999;
+    padding: 6px;
+  }
+
+  .summary-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 18px;
+    font-size: 18px;
+  }
+
+  .summary-right {
+    justify-self: end;
+    width: 420px;
+  }
+
+  .summary-line {
+    display: grid;
+    grid-template-columns: 1fr 120px 80px;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+
+  .summary-line span {
+    border-bottom: 2px solid #333;
+    padding: 3px;
+  }
+
+  .wastage-red {
+    color: red;
+    font-weight: bold;
+  }
+
+  .bottom-summary {
+    margin-top: 25px;
+    display: flex;
+    gap: 50px;
+    font-size: 20px;
+    align-items: center;
+  }
+
+  .bottom-summary .value {
+    font-weight: bold;
+    font-size: 24px;
+    border-bottom: 2px solid #333;
+    padding: 4px 35px;
+  }
+
+  .buttons {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .buttons button,
+  .buttons a {
+    display: inline-block;
+    margin-right: 8px;
+    background: #111;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  @media print {
+    .buttons {
+      display: none;
+    }
+
+    body {
+      background: white;
+    }
+
+    .sheet-page {
+      padding: 0;
+    }
+
+    .sheet {
+      width: 100%;
+      border: 2px solid black;
+    }
+  }
+</style>
+
+<div class="sheet-page">
+  <div class="sheet">
+
+    <div class="sheet-title">CUTTING DETAIL</div>
+
+    <div class="info-row">
+      <div>
+        <span class="label">Job No:</span>
+        {{ first.job_no }}
+      </div>
+
+      <div class="right">
+        <span class="label">Cutting Date:</span>
+        {{ first.job_date }}
+      </div>
+    </div>
+
+    <div class="info-row three">
+      <div>
+        <span class="label">Lot No:</span>
+        {{ first.lot_no }}
+      </div>
+
+      <div>
+        {{ first.item_name }}
+      </div>
+
+      <div></div>
+    </div>
+
+    <div class="info-row three">
+      <div>
+        <span class="label">DC No:</span>
+        0
+      </div>
+
+      <div>
+        {{ first.supplier_name }}
+      </div>
+
+      <div></div>
+    </div>
+
+    <div class="info-row three">
+      <div>
+        <span class="label">Batch:</span>
+        {{ first.batch_no }}
+      </div>
+
+      <div>
+        <span class="label">Weight:</span>
+        {{ "{:,.2f}".format(first.coil_weight|float) if first.coil_weight else "0.00" }}
+      </div>
+
+      <div>
+        <span class="label">Weight MM</span>
+        {{ first.weight_mm }}
+      </div>
+    </div>
+
+    <table class="cut-table">
+      <thead>
+        <tr>
+          <th>Pipe Name</th>
+          <th>Thickness</th>
+          <th>Strip Name</th>
+          <th>Quantity</th>
+          <th>T.Width</th>
+          <th>Weight KG</th>
+          <th>Issue/Stock</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for c in cuts %}
+        <tr>
+          <td>{{ c.pipe_name }}</td>
+          <td>{{ c.thickness_name }}</td>
+          <td>{{ c.strip_name }}</td>
+          <td>{{ "{:,.2f}".format(c.quantity|float) if c.quantity else "0.00" }}</td>
+          <td>{{ "{:,.2f}".format(c.total_width|float) if c.total_width else "0.00" }}</td>
+          <td>{{ "{:,.2f}".format(c.line_weight|float) if c.line_weight else "0.00" }}</td>
+          <td>
+            {% if c.issue == "Y" %}
+              Issue
+            {% else %}
+              Stock
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="summary-area">
+      <div></div>
+
+      <div class="summary-right">
+        <div class="summary-line">
+          <div>Coil Width MM</div>
+          <span>{{ "{:,.2f}".format(coil_width) }}</span>
+          <strong>KG</strong>
+        </div>
+
+        <div class="summary-line">
+          <div>Utilize MM</div>
+          <span>{{ "{:,.2f}".format(total_width) }}</span>
+          <strong>{{ "{:,.2f}".format(total_weight) }} KG</strong>
+        </div>
+
+        <div class="summary-line">
+          <div>Wastage MM</div>
+          <span class="wastage-red">{{ "{:,.2f}".format(wastage) }}</span>
+          <strong>KG</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-summary">
+      <div>
+        Total Pipe
+        <span class="value">{{ "{:,.2f}".format(total_pipe) }}</span>
+      </div>
+
+      <div>
+        Single Pipe Weight:
+        <span class="value">
+          {% if total_pipe %}
+            {{ "{:,.2f}".format(total_weight / total_pipe) }}
+          {% else %}
+            0.00
+          {% endif %}
+          KG
+        </span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="buttons">
+  <button onclick="window.print()">Print</button>
+  <a href="{{ url_for('cutting_job') }}">Back</a>
+</div>
+
+{% endblock %}

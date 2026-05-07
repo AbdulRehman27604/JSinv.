@@ -1,0 +1,677 @@
+{% extends "layout.html" %}
+
+{% block extra_styles %}
+<style>
+  .cut-page {
+    padding: 20px;
+    color: white;
+  }
+
+  .cut-top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .cut-box {
+    border: 1px solid #444;
+    background-color: #2A2A2A;
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .cut-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: white;
+  }
+
+  .top-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.4fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .form-row label {
+    width: 120px;
+    font-weight: bold;
+    color: #f04b5f;
+  }
+
+  .form-row .blue-label {
+    color: #5d5dff;
+  }
+
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    flex: 1;
+    background-color: #1c1c1c;
+    color: white;
+    border: 1px solid #666;
+    padding: 6px;
+    border-radius: 3px;
+    font-size: 15px;
+  }
+
+  textarea {
+    resize: none;
+    height: 38px;
+  }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 130px 90px 150px 90px 150px 90px 110px 110px 100px 90px 160px;
+    gap: 6px;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+
+  .item-row label {
+    display: block;
+    font-weight: bold;
+    color: #f04b5f;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .item-row input,
+  .item-row select {
+    width: 100%;
+    background-color: #1c1c1c;
+    color: white;
+    border: 1px solid #666;
+    padding: 6px;
+    border-radius: 3px;
+    box-sizing: border-box;
+  }
+
+  .submit-cut-btn {
+    background-color: #0786d8;
+    color: white;
+    font-weight: bold;
+    border: 1px solid #005c99;
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .submit-cut-btn:hover {
+    background-color: #ef34dd;
+    transform: translateY(-2px);
+  }
+
+  .job-table-box {
+    border: 1px solid #555;
+    max-height: 390px;
+    overflow-y: auto;
+    overflow-x: auto;
+    background-color: #aaa;
+  }
+
+  .job-table {
+    width: 100%;
+    min-width: 1500px;
+    border-collapse: collapse;
+    background-color: #2A2A2A;
+    color: white;
+    font-size: 14px;
+  }
+
+  .job-table th,
+  .job-table td {
+    border: 1px solid #777;
+    padding: 7px;
+    height: 32px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .job-table th {
+    background-color: #000;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .job-table tr:hover {
+    background-color: #ef34dd;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    transition: all 0.25s ease;
+    margin-right: 4px;
+  }
+
+  .action-btn:hover {
+    background-color: #222;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .delete-btn:hover {
+    background-color: #b00020;
+    color: white;
+  }
+
+  .cancel-btn {
+    margin-left: 8px;
+  }
+
+  .back-link {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="cut-page">
+
+  <div class="cut-top-actions">
+    <a class="back-link" href="{{ url_for('main_page') }}">← Back to GRN</a>
+
+    <a class="action-btn" href="{{ url_for('cut_records_page') }}">
+      All Submitted Cutting Jobs
+    </a>
+  </div>
+
+  <div class="cut-box">
+    <div class="cut-title">
+      {% if edit_cutting %}
+        Edit Cutting Job
+      {% else %}
+        Cutting Job
+      {% endif %}
+    </div>
+
+    {% if edit_cutting %}
+      <form method="POST" action="{{ url_for('cut_update', id=edit_cutting.id) }}">
+    {% else %}
+      <form method="POST" action="{{ url_for('cutting_job') }}">
+    {% endif %}
+
+      <div class="top-grid">
+
+        <div>
+          <div class="form-row">
+            <label>Job No</label>
+            <input id="job_no" type="text" name="job_no" value="{{ edit_cutting.job_no if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Supplier Code</label>
+            <input id="supplier_code" type="text" name="supplier_code" value="{{ edit_cutting.supplier_code if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Broker Code</label>
+            <input id="broker_code" type="text" name="broker_code" value="{{ edit_cutting.broker_code if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Comments</label>
+            <textarea id="comments" name="comments">{{ edit_cutting.comments if edit_cutting else '' }}</textarea>
+          </div>
+
+          <div class="form-row">
+            <label>Lot No</label>
+            <select id="lot_no_select" name="lot_no">
+              <option value="">Select Lot No</option>
+
+              {% for grn in grn_records %}
+                <option
+                  value="{{ grn.serial_num }}"
+                  data-supplier-code="{{ grn.supp_code or '' }}"
+                  data-broker-code="{{ grn.broker_code or '' }}"
+                  data-comments="{{ grn.comments or '' }}"
+                  data-supplier-name="{{ grn.supplier_name or '' }}"
+                  data-tm-no="{{ grn.job_num or '' }}"
+                  data-item-name="{{ grn.item_desc or '' }}"
+                  data-manuf-code="{{ grn.manufcode or '' }}"
+                  data-uom="{{ grn.uom or '' }}"
+                  data-batch-no="{{ grn.batchNo or '' }}"
+                  data-weight="{{ grn.weight or '' }}"
+                  data-hardness="{{ grn.hardness or '' }}"
+                  data-grade="{{ grn.grade or '' }}"
+                  data-coil="{{ grn.coil_type or '' }}"
+                  data-item-code="{{ grn.itemcode or '' }}"
+                  {% if edit_cutting and edit_cutting.lot_no == grn.serial_num %}selected{% endif %}
+                >
+                  {{ grn.serial_num }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="form-row">
+            <label>Job Date</label>
+            <input id="job_date" type="date" name="job_date" value="{{ edit_cutting.job_date if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Supplier Name</label>
+            <input id="supplier_name" type="text" name="supplier_name" value="{{ edit_cutting.supplier_name if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Broker Name</label>
+            <input id="broker_name" type="text" name="broker_name" value="{{ edit_cutting.broker_name if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Tm No</label>
+            <input id="tm_no" type="text" name="tm_no" value="{{ edit_cutting.tm_no if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label class="blue-label">Item Name</label>
+            <input id="item_name" type="text" name="item_name" value="{{ edit_cutting.item_name if edit_cutting else '' }}">
+          </div>
+        </div>
+
+        <div>
+          <div class="form-row">
+            <label>Width</label>
+            <input type="text" id="coil_width" name="coil_width" value="{{ edit_cutting.coil_width if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>Utilize</label>
+            <input type="text" id="utilize" name="utilize" value="{{ edit_cutting.utilize if edit_cutting else '' }}" readonly>
+          </div>
+
+          <div class="form-row">
+            <label>Wastage</label>
+            <input type="text" id="wastage" name="wastage" value="{{ edit_cutting.wastage if edit_cutting else '' }}" readonly>
+          </div>
+
+          <div class="form-row">
+            <label>Wght MM</label>
+            <input type="text" id="weight_mm" name="weight_mm" value="{{ edit_cutting.weight_mm if edit_cutting else '' }}">
+          </div>
+
+          <div class="form-row">
+            <label>T. Pipe</label>
+            <input type="text" id="total_pipe" name="total_pipe" value="{{ edit_cutting.total_pipe if edit_cutting else '' }}" readonly>
+          </div>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <div class="top-grid">
+        <div class="form-row">
+          <label class="blue-label">Manuf Code</label>
+          <input id="manuf_code" type="text" name="manuf_code" value="{{ edit_cutting.manuf_code if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">UOM</label>
+          <input id="uom" type="text" name="uom" value="{{ edit_cutting.uom if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">Batch No</label>
+          <input id="batch_no" type="text" name="batch_no" value="{{ edit_cutting.batch_no if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">Weight</label>
+          <input id="coil_weight" type="text" name="coil_weight" value="{{ edit_cutting.coil_weight if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">Hardness</label>
+          <input id="hardness" type="text" name="hardness" value="{{ edit_cutting.hardness if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">Grade</label>
+          <input id="grade" type="text" name="grade" value="{{ edit_cutting.grade if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">Coil</label>
+          <input id="coil_type" type="text" name="coil_type" value="{{ edit_cutting.coil_type if edit_cutting else '' }}">
+        </div>
+
+        <div class="form-row">
+          <label class="blue-label">Item Code</label>
+          <input id="item_code" type="text" name="item_code" value="{{ edit_cutting.item_code if edit_cutting else '' }}">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="item-row">
+
+        <div>
+          <label>Pipe Name</label>
+          <select id="pipe_select" name="pipe_id" required>
+            <option value="">Select Pipe</option>
+            {% for pipe in pipe_sizes %}
+              <option
+                value="{{ pipe.id }}"
+                data-code="{{ pipe.code }}"
+                data-name="{{ pipe.name }}"
+                {% if edit_cutting and edit_cutting.pipe_code == pipe.code %}selected{% endif %}
+              >
+                {{ pipe.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>Pipe Code</label>
+          <input type="text" id="pipe_code_display" name="pipe_code_display" value="{{ edit_cutting.pipe_code if edit_cutting else '' }}" readonly>
+        </div>
+
+        <div>
+          <label>Thickness Name</label>
+          <select id="thickness_select" name="thickness_id" required>
+            <option value="">Select Thickness</option>
+            {% for thickness in thickness_sizes %}
+              <option
+                value="{{ thickness.id }}"
+                data-code="{{ thickness.code }}"
+                data-name="{{ thickness.name }}"
+                {% if edit_cutting and edit_cutting.thickness_code == thickness.code %}selected{% endif %}
+              >
+                {{ thickness.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>Thick Code</label>
+          <input type="text" id="thickness_code_display" name="thickness_code_display" value="{{ edit_cutting.thickness_code if edit_cutting else '' }}" readonly>
+        </div>
+
+        <div>
+          <label>Strip Name</label>
+          <select id="strip_select" name="strip_id" required>
+            <option value="">Select Strip</option>
+            {% for strip in strip_sizes %}
+              <option
+                value="{{ strip.id }}"
+                data-code="{{ strip.code }}"
+                data-name="{{ strip.name }}"
+                data-size="{{ strip.size }}"
+                data-pipe-weight="{{ strip.pipe_weight }}"
+                data-pipe-code="{{ strip.pipe_code }}"
+                data-pipe-name="{{ strip.pipe_name }}"
+                data-thickness-code="{{ strip.thickness_code }}"
+                data-thickness-name="{{ strip.thickness_name }}"
+                {% if edit_cutting and edit_cutting.strip_code == strip.code %}selected{% endif %}
+              >
+                {{ strip.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label>Strip Code</label>
+          <input type="text" id="strip_code_display" name="strip_code_display" value="{{ edit_cutting.strip_code if edit_cutting else '' }}" readonly>
+        </div>
+
+        <div>
+          <label>Strip Size</label>
+          <input type="text" id="strip_size" name="strip_size" value="{{ edit_cutting.strip_size if edit_cutting else '' }}" readonly>
+        </div>
+
+        <div>
+          <label>Quantity</label>
+          <input type="number" id="quantity" name="quantity" min="0" step="1" value="{{ edit_cutting.quantity if edit_cutting else '' }}">
+        </div>
+
+        <div>
+          <label>T. Width</label>
+          <input type="text" id="total_width" name="total_width" value="{{ edit_cutting.total_width if edit_cutting else '' }}" readonly>
+        </div>
+
+        <div>
+          <label>Weight</label>
+          <input type="text" id="line_weight" name="line_weight" value="{{ edit_cutting.line_weight if edit_cutting else '' }}" readonly>
+        </div>
+
+        <div>
+          <label>Issue Y/N</label>
+          <select name="issue">
+            <option value="Y" {% if edit_cutting and edit_cutting.issue == "Y" %}selected{% endif %}>Y</option>
+            <option value="N" {% if edit_cutting and edit_cutting.issue == "N" %}selected{% endif %}>N</option>
+          </select>
+        </div>
+
+      </div>
+
+      {% if edit_cutting %}
+        <button type="submit" class="submit-cut-btn">UPDATE</button>
+        <a class="action-btn cancel-btn" href="{{ url_for('cutting_job') }}">Cancel</a>
+      {% else %}
+        <button type="submit" class="submit-cut-btn">SUBMIT</button>
+      {% endif %}
+
+    </form>
+  </div>
+
+  <div class="job-table-box">
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th>Pipe Code</th>
+          <th>Pipe Name</th>
+          <th>Thick Code</th>
+          <th>Thick Name</th>
+          <th>Strip Code</th>
+          <th>Strip Name</th>
+          <th>Strip Size</th>
+          <th>Quantity</th>
+          <th>Total Width</th>
+          <th>Weight</th>
+          <th>Issue</th>
+          <th>Lot No</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for c in cutting_records %}
+        <tr>
+          <td>{{ c.pipe_code }}</td>
+          <td>{{ c.pipe_name }}</td>
+          <td>{{ c.thickness_code }}</td>
+          <td>{{ c.thickness_name }}</td>
+          <td>{{ c.strip_code }}</td>
+          <td>{{ c.strip_name }}</td>
+          <td>{{ c.strip_size }}</td>
+          <td>{{ c.quantity }}</td>
+          <td>{{ c.total_width }}</td>
+          <td>{{ c.line_weight }}</td>
+          <td>{{ c.issue }}</td>
+          <td>{{ c.lot_no }}</td>
+          <td>
+            <a
+  class="action-btn"
+  href="{{ url_for('cut_sheet', id=c.id) }}"
+>
+  Sheet
+</a>
+
+            <a
+              class="action-btn"
+              href="{{ url_for('cut_edit', id=c.id) }}"
+            >
+              Edit
+            </a>
+
+            <a
+              class="action-btn delete-btn"
+              href="{{ url_for('cut_delete', id=c.id) }}"
+              onclick="return confirm('Delete this cutting row?')"
+            >
+              Delete
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+  function updateLotFields() {
+    const select = document.getElementById("lot_no_select");
+    const selected = select.options[select.selectedIndex];
+
+    document.getElementById("supplier_code").value = selected.dataset.supplierCode || "";
+    document.getElementById("broker_code").value = selected.dataset.brokerCode || "";
+    document.getElementById("comments").value = selected.dataset.comments || "";
+
+    document.getElementById("supplier_name").value = selected.dataset.supplierName || "";
+    document.getElementById("tm_no").value = selected.dataset.tmNo || "";
+    document.getElementById("item_name").value = selected.dataset.itemName || "";
+
+    document.getElementById("manuf_code").value = selected.dataset.manufCode || "";
+    document.getElementById("uom").value = selected.dataset.uom || "";
+    document.getElementById("batch_no").value = selected.dataset.batchNo || "";
+    document.getElementById("coil_weight").value = selected.dataset.weight || "";
+
+    document.getElementById("hardness").value = selected.dataset.hardness || "";
+    document.getElementById("grade").value = selected.dataset.grade || "";
+    document.getElementById("coil_type").value = selected.dataset.coil || "";
+    document.getElementById("item_code").value = selected.dataset.itemCode || "";
+  }
+
+  function selectOptionByDataCode(selectId, code) {
+    const select = document.getElementById(selectId);
+
+    for (let i = 0; i < select.options.length; i++) {
+      if (select.options[i].dataset.code === code) {
+        select.selectedIndex = i;
+        return select.options[i];
+      }
+    }
+
+    return null;
+  }
+
+  function updatePipeFields() {
+    const select = document.getElementById("pipe_select");
+    const option = select.options[select.selectedIndex];
+
+    document.getElementById("pipe_code_display").value = option.dataset.code || "";
+  }
+
+  function updateThicknessFields() {
+    const select = document.getElementById("thickness_select");
+    const option = select.options[select.selectedIndex];
+
+    document.getElementById("thickness_code_display").value = option.dataset.code || "";
+  }
+
+  function updateStripFields() {
+    const select = document.getElementById("strip_select");
+    const option = select.options[select.selectedIndex];
+
+    const stripCode = option.dataset.code || "";
+    const stripSize = option.dataset.size || "";
+    const pipeCode = option.dataset.pipeCode || "";
+    const thicknessCode = option.dataset.thicknessCode || "";
+    const pipeWeight = option.dataset.pipeWeight || "";
+
+    document.getElementById("strip_code_display").value = stripCode;
+    document.getElementById("strip_size").value = stripSize;
+    document.getElementById("weight_mm").value = pipeWeight;
+
+    const pipeOption = selectOptionByDataCode("pipe_select", pipeCode);
+    if (pipeOption) {
+      document.getElementById("pipe_code_display").value = pipeOption.dataset.code || "";
+    } else {
+      document.getElementById("pipe_code_display").value = pipeCode;
+    }
+
+    const thicknessOption = selectOptionByDataCode("thickness_select", thicknessCode);
+    if (thicknessOption) {
+      document.getElementById("thickness_code_display").value = thicknessOption.dataset.code || "";
+    } else {
+      document.getElementById("thickness_code_display").value = thicknessCode;
+    }
+
+    calculateLine();
+  }
+
+  function calculateLine() {
+    const stripSelect = document.getElementById("strip_select");
+    const stripOption = stripSelect.options[stripSelect.selectedIndex];
+
+    const stripSize = parseFloat(stripOption.dataset.size || 0);
+    const quantity = parseFloat(document.getElementById("quantity").value || 0);
+    const coilWidth = parseFloat(document.getElementById("coil_width").value || 0);
+    const weightMM = parseFloat(document.getElementById("weight_mm").value || 0);
+
+    const totalWidth = stripSize * quantity;
+    const lineWeight = totalWidth * weightMM;
+    const wastage = coilWidth - totalWidth;
+
+    document.getElementById("total_width").value = totalWidth ? totalWidth.toFixed(2) : "";
+    document.getElementById("line_weight").value = lineWeight ? lineWeight.toFixed(2) : "";
+    document.getElementById("utilize").value = totalWidth ? totalWidth.toFixed(2) : "";
+    document.getElementById("wastage").value = coilWidth ? wastage.toFixed(2) : "";
+    document.getElementById("total_pipe").value = quantity ? quantity : "";
+  }
+
+  document.getElementById("lot_no_select").addEventListener("change", updateLotFields);
+  document.getElementById("pipe_select").addEventListener("change", updatePipeFields);
+  document.getElementById("thickness_select").addEventListener("change", updateThicknessFields);
+  document.getElementById("strip_select").addEventListener("change", updateStripFields);
+  document.getElementById("quantity").addEventListener("input", calculateLine);
+  document.getElementById("coil_width").addEventListener("input", calculateLine);
+  document.getElementById("weight_mm").addEventListener("input", calculateLine);
+
+  window.addEventListener("load", function () {
+    updatePipeFields();
+    updateThicknessFields();
+    updateStripFields();
+    calculateLine();
+  });
+</script>
+{% endblock %}

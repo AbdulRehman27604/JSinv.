@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cutting Job Form</title>
+<style>
+    body {
+        font-family: Tahoma, Arial, sans-serif;
+        background: #e9e1e1;
+        margin: 0;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .container {
+        background: #f3ecec;
+        border: 1px solid #999;
+        padding: 8px;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
+    }
+
+    .row label {
+        width: 90px;
+        font-weight: bold;
+    }
+
+    .row input {
+        height: 22px;
+        padding: 2px 4px;
+        border: 1px solid #999;
+        margin-right: 10px;
+        background: #fff;
+    }
+
+    .small { width: 70px; }
+    .medium { width: 160px; }
+    .large { width: 300px; }
+
+    .red {
+        color: #b30000;
+        font-weight: bold;
+    }
+
+    .section {
+        border-top: 1px solid #aaa;
+        margin-top: 6px;
+        padding-top: 6px;
+    }
+
+    .inline-label {
+        margin-right: 4px;
+        font-weight: bold;
+    }
+
+    .submit-btn {
+        background: #1e90ff;
+        color: white;
+        border: none;
+        padding: 6px 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<form action="/submit-cutting-job" method="post">
+
+<div class="container">
+
+    <!-- ROW 1 -->
+    <div class="row">
+        <label>Job No</label>
+        <input name="job_no" class="small">
+        <label>Job Date</label>
+        <input type="date" name="job_date" class="medium">
+        <span class="inline-label red">Width</span>
+        <input name="width" class="small">
+        <label style="position:relative; left:20%;">Order No</label>
+        <input name="order_no" class="small">
+    </div>
+    
+
+    <!-- ROW 2 -->
+    <div class="row">
+        <label>Supplier Code</label>
+        <input name="supplier_code" class="small">
+        <label>Supplier Name</label>
+        <input name="supplier_name" class="large">
+        <span class="inline-label red">Utilize</span>
+        <input name="utilize" class="small">
+        <label>DC No</label>
+        <input name="dc_no" class="small">
+    </div>
+
+    <!-- ROW 3 -->
+    <div class="row">
+        <label>Broker Code</label>
+        <input name="broker_code" class="small">
+        <label>Broker Name</label>
+        <input name="broker_name" class="large">
+        <span class="inline-label red">Wastage</span>
+        <input name="wastage" class="small">
+        <label>DC Date</label>
+        <input type="date" name="dc_date" class="medium">
+    </div>
+
+    <!-- ROW 4 -->
+    <div class="row">
+        <label>Comments</label>
+        <input name="comments" class="large">
+        <span class="inline-label red">Wght MM</span>
+        <input name="weight_mm" class="small">
+        <label>Bill No</label>
+        <input name="bill_no" class="small">
+    </div>
+
+    <!-- ROW 5 -->
+    <div class="row">
+        <label>Lot No</label>
+        <input name="lot_no" class="medium">
+        <label>Trn No</label>
+        <input name="trn_no" class="small">
+        <span class="inline-label red">T. Pipe</span>
+        <input name="t_pipe" class="small">
+        <label>Bill Date</label>
+        <input type="date" name="bill_date" class="medium">
+    </div>
+
+    <!-- ITEM SECTION -->
+    <div class="section">
+        <div class="row">
+            <label>Item Name</label>
+            <input name="item_name" class="large">
+            <label>Manuf Code</label>
+            <input name="manuf_code" class="medium">
+            <label>UOM</label>
+            <input name="uom" class="small">
+            <label>Batch No</label>
+            <input name="batch_no" class="medium">
+        </div>
+
+        <div class="row">
+            <label>Weight</label>
+            <input name="weight" class="small">
+            <label>Hardness</label>
+            <input name="hardness" class="small">
+            <label>Grade</label>
+            <input name="grade" class="small">
+            <label>Coil</label>
+            <input name="coil" class="small">
+            <label>Item Code</label>
+            <input name="item_code" class="small">
+        </div>
+    </div>
+
+    <!-- PIPE / STRIP SECTION -->
+    <div class="section">
+        <div class="row">
+            <label>Pipe Code</label>
+            <input name="pipe_code" class="small">
+            <label>Pipe Description</label>
+            <input name="pipe_description" class="large">
+        </div>
+
+        <div class="row">
+            <label>Thickness Code</label>
+            <input name="thickness_code" class="small">
+            <label>Name</label>
+            <input name="thickness_name" class="medium">
+            <label>Strip Code</label>
+            <input name="strip_code" class="small">
+            <label>Name</label>
+            <input name="strip_name" class="medium">
+            <label>Quantity</label>
+            <input name="quantity" class="small">
+            <label>T. Width</label>
+            <input name="total_width" class="small">
+            <label>Weight</label>
+            <input name="strip_weight" class="small">
+            <label>Issue Y/N</label>
+            <input name="issue" class="small">
+            <button type="submit" class="submit-btn">SUBMIT</button>
+        </div>
+    </div>
+
+</div>
+</form>
+
+</body>
+</html>

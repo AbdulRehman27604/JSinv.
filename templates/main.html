@@ -6,6 +6,32 @@
     padding: 20px;
 }
 
+/* ---------- GRN TOP ACTION BUTTONS ---------- */
+
+.grn-action-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.grn-action-btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: #1c1c1c;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.25s ease;
+}
+
+.grn-action-btn:hover {
+    background-color: #ef34dd;
+    color: white;
+    transform: translateY(-2px);
+}
+
 /* ---------- GRN FORM LAYOUT ---------- */
 
 .form-container {
@@ -139,6 +165,11 @@ th {
 <div class="page-container">
 
 <h2>GRN:</h2>
+
+<div class="grn-action-row">
+    <a class="grn-action-btn" href="{{ url_for('records_page') }}">Submitted Records</a>
+    <a class="grn-action-btn" href="{{ url_for('search_jobs') }}">Search GRN</a>
+</div>
 
 <form method="POST" action="/submit">
     <div class="form-container">
@@ -381,7 +412,6 @@ function handleAddNew(selectId, typeName) {
                 opt.text = newValue;
                 opt.value = newValue;
 
-                // Insert before "+ Add New"
                 select.insertBefore(opt, select.lastElementChild);
                 select.value = newValue;
             } else {
@@ -392,7 +422,6 @@ function handleAddNew(selectId, typeName) {
     });
 }
 
-// Attach to dropdowns
 handleAddNew("coil", "coil");
 handleAddNew("supplier", "supplier");
 handleAddNew("Grade", "grade");
@@ -400,7 +429,6 @@ handleAddNew("ItemDesc", "itemdesc");
 </script>
 
 
-<!-- Serial Number Script -->
 <script>
 (function () {
     const coilSelect = document.getElementById('coil');

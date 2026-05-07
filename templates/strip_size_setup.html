@@ -1,0 +1,289 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<style>
+  .strip-page {
+    padding: 25px;
+  }
+
+  .strip-form-box {
+    width: 65%;
+    border: 1px solid #ccc;
+    padding: 25px;
+    min-height: 270px;
+    margin-bottom: 35px;
+  }
+
+  .strip-form-box h2 {
+    margin-top: 0;
+    color: #555;
+  }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .form-row label {
+    width: 170px;
+    font-size: 18px;
+    color: #66F;
+  }
+
+  .form-row input,
+  .form-row select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #bbb;
+  }
+
+  .code-input {
+    width: 90px;
+  }
+
+  .name-input {
+    width: 360px;
+  }
+
+  .size-input {
+    width: 120px;
+    margin-left: 20px;
+  }
+
+  .select-input {
+    width: 420px;
+  }
+
+  .weight-input {
+    width: 120px;
+  }
+
+  .button-row {
+    margin-top: 25px;
+  }
+
+  .button-row button,
+  .action-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background-color: #f2f2f2;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+  }
+
+  .button-row button:hover,
+  .action-btn:hover {
+    background-color: #222;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .delete-btn:hover {
+    background-color: #b00020;
+    color: white;
+  }
+
+  .cancel-btn {
+    margin-left: 10px;
+  }
+
+  .strip-table-box {
+    width: 95%;
+    border: 1px solid #333;
+    max-height: 390px; /* header + about 10 rows */
+    overflow-y: auto;
+    background-color: #aaa;
+  }
+
+  .strip-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background-color: #2A2A2A;
+  }
+
+  .strip-table th,
+  .strip-table td {
+    border: 1px solid #ccc;
+    padding: 7px;
+    height: 32px;
+    text-align: left;
+  }
+
+  .strip-table th {
+    background-color: #000;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .strip-table tr:hover {
+    background-color: #ef34dd;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 15px;
+    text-decoration: none;
+    color: #FFF;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="strip-page">
+
+  <a class="back-link" href="{{ url_for('setup') }}">← Back to Setup</a>
+
+  <div class="strip-form-box">
+    <h2>
+      {% if edit_strip %}
+        Edit Strip Size
+      {% else %}
+        Strip Size Setup
+      {% endif %}
+    </h2>
+
+    {% if edit_strip %}
+      <form method="POST" action="{{ url_for('strip_size_update', id=edit_strip.id) }}">
+    {% else %}
+      <form method="POST" action="{{ url_for('strip_size_setup') }}">
+    {% endif %}
+
+      <div class="form-row">
+        <label>Strip Size Code</label>
+        <input
+          class="code-input"
+          type="text"
+          name="strip_code"
+          value="{{ edit_strip.code if edit_strip else '' }}"
+          required
+        >
+      </div>
+
+      <div class="form-row">
+        <label>Strip Size Name</label>
+        <input
+          class="name-input"
+          type="text"
+          name="strip_name"
+          value="{{ edit_strip.name if edit_strip else '' }}"
+          required
+        >
+
+        <label style="width: 50px; margin-left: 20px;">Size</label>
+        <input
+          class="size-input"
+          type="text"
+          name="size"
+          value="{{ edit_strip.size if edit_strip else '' }}"
+        >
+      </div>
+
+      <div class="form-row">
+        <label>Thickness Code</label>
+        <select class="select-input" name="thickness_id" required>
+          <option value="">Select Thickness</option>
+
+          {% for thickness in thickness_sizes %}
+            <option
+              value="{{ thickness.id }}"
+              {% if edit_strip and edit_strip.thickness_code == thickness.code %}selected{% endif %}
+            >
+              {{ thickness.code }} - {{ thickness.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Pipe Size Code</label>
+        <select class="select-input" name="pipe_id" required>
+          <option value="">Select Pipe Size</option>
+
+          {% for pipe in pipe_sizes %}
+            <option
+              value="{{ pipe.id }}"
+              {% if edit_strip and edit_strip.pipe_code == pipe.code %}selected{% endif %}
+            >
+              {{ pipe.code }} - {{ pipe.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Pipe Weight</label>
+        <input
+          class="weight-input"
+          type="text"
+          name="pipe_weight"
+          value="{{ edit_strip.pipe_weight if edit_strip else '' }}"
+        >
+      </div>
+
+      <div class="button-row">
+        {% if edit_strip %}
+          <button type="submit">Update</button>
+          <a class="action-btn cancel-btn" href="{{ url_for('strip_size_setup') }}">Cancel</a>
+        {% else %}
+          <button type="submit">Save</button>
+        {% endif %}
+      </div>
+
+    </form>
+  </div>
+
+  <div class="strip-table-box">
+    <table class="strip-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Strip Size Name</th>
+          <th>Size</th>
+          <th>Pipe Size</th>
+          <th>Thickness</th>
+          <th>Pipe Weight</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for strip in strip_sizes %}
+        <tr>
+          <td>{{ strip.code }}</td>
+          <td>{{ strip.name }}</td>
+          <td>{{ strip.size }}</td>
+          <td>{{ strip.pipe_name }}</td>
+          <td>{{ strip.thickness_name }}</td>
+          <td>{{ strip.pipe_weight }}</td>
+          <td>
+            <a class="action-btn" href="{{ url_for('strip_size_edit', id=strip.id) }}">Edit</a>
+
+            <a
+              class="action-btn delete-btn"
+              href="{{ url_for('strip_size_delete', id=strip.id) }}"
+              onclick="return confirm('Are you sure you want to delete this strip size?')"
+            >
+              Delete
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+{% endblock %}
